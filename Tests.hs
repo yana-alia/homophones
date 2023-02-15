@@ -591,8 +591,11 @@ homophonesTable
     ]
   
 allTestCases
-  = [ TestCase "Morse homophoneTable" (uncurry homophones) homophonesTable ]
+  = [ TestCase "Morse homophoneTable" (uncurry homophone) homophonesTable ]
 
 runTests = mapM_ goTest allTestCases
 
-main = runTests
+main = do
+    putStrLn "Starting..."
+    time $ runTests
+    putStrLn "Done."

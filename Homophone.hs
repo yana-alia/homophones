@@ -1,16 +1,12 @@
 module Homophone where
--- import qualified Data.ByteString.Lazy as BS
--- import qualified Data.Map.Strict as Map
--- import GHC.IO.Unsafe
--- import Debug.Trace
--- import Data.Binary
--- import Data.Char
+
+import Debug.Trace
 import Control.Monad
 import qualified Data.Map as Map
-
--- import PhoneDict
 import Data.IntMap (fromList)
 import Data.Char
+
+import PhoneDict
 
 testList = [("A", "AH0"), 
   ("A(1)", "EY1"), 
@@ -31,22 +27,25 @@ testList = [("A", "AH0"),
   ("AAKER", "AA1 K ER0"), 
   ("AALIYAH", "AA2 L IY1 AA2")]
 
--- Takes two words and compares their phonetic spellings and outputs True if
--- if their are homophones of each other and false otherwise
-homophones :: String -> String -> Bool
-homophones x y = True
+-- Takes two words and compares their phonetic spellings and outputs True
+-- if they're are homophones of each other and false otherwise
+homophone :: String -> String -> Bool
+homophone x y = phonX == phonY
+    where
+        phonX = convertToPhon x
+        phonY = convertToPhon y
 
-convertToPairList :: IO ()
-convertToPairList = do
-    s <- readFile "cmudict-list"
-    let newContents = [n | c <- lines s, n <- "(\"" ++ c ++ "\"), "]
-    unless (null newContents) $
-        writeFile "cmudict-list.txt" newContents
+homophone2 x y = do 
+    let dict = dictMap
+    let phonX = Map.lookup (map toUpper x) dict
+    let phonY = Map.lookup (map toUpper y) dict
+    phonX == phonY
 
 -- Converts the phoneDict into a Map
--- dictMap :: Map.Map String String
--- dictMap = Map.fromList phoneDict
+dictMap :: Map.Map String String
+dictMap = Map.fromList phoneDict
 
+-- Used if using a List of pairs with key: word, elem: spelling
 lookupDict :: [(String, String)] -> String -> (String, String)
 lookupDict [] _ = ("","")
 lookupDict (d:ds) w
@@ -55,7 +54,16 @@ lookupDict (d:ds) w
     where
         upperW = map toUpper w
 
-convertToPron :: String -> String
-convertToPron w = pron
+-- TODO: Switch to using Maybe to handle words not in dictionary
+convertToPhon :: String -> String
+convertToPhon w = phon
     where
-        (_ , pron) = lookupDict testList w
+        (_ , phon) = lookupDict phoneDict w
+
+-- helps in converting the dictionary to fit list of pair format
+convertToPairList :: IO ()
+convertToPairList = do
+    s <- readFile "cmudict-list"
+    let newContents = [n | c <- lines s, n <- "(\"" ++ c ++ "\"), "]
+    unless (null newContents) $
+        writeFile "cmudict-list.txt" newContents
