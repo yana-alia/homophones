@@ -12,6 +12,7 @@ import Text.Printf
 import Control.Exception
 import System.CPUTime
 
+-- Taken from https://wiki.haskell.org/Timing_computations
 time :: IO t -> IO t
 time a = do
     start <- getCPUTime

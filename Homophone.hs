@@ -29,21 +29,24 @@ testList = [("A", "AH0"),
 
 -- Takes two words and compares their phonetic spellings and outputs True
 -- if they're are homophones of each other and false otherwise
-homophone :: String -> String -> Bool
-homophone x y = phonX == phonY
-    where
-        phonX = convertToPhon x
-        phonY = convertToPhon y
-
-homophone2 x y = do 
+homophone x y = do 
     let dict = dictMap
     let phonX = Map.lookup (map toUpper x) dict
     let phonY = Map.lookup (map toUpper y) dict
     phonX == phonY
 
+homophone2 :: String -> String -> Bool
+homophone2 x y = phonX == phonY
+    where
+        phonX = convertToPhon x
+        phonY = convertToPhon y    
+
 -- Converts the phoneDict into a Map
 dictMap :: Map.Map String String
 dictMap = Map.fromList phoneDict
+
+------------------------------------------------------------------------------------
+-- If using phoneDict as a list not a Hash Map
 
 -- Used if using a List of pairs with key: word, elem: spelling
 lookupDict :: [(String, String)] -> String -> (String, String)
