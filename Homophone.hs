@@ -6,26 +6,22 @@ import qualified Data.Map as Map
 import Data.IntMap (fromList)
 import Data.Char
 
-import PhoneDict
+import MergedDict
 
-testList = [("A", "AH0"), 
-  ("A(1)", "EY1"), 
-  ("A'S", "EY1 Z"), 
-  ("A.", "EY1"), 
-  ("A.'S", "EY1 Z"), 
-  ("A.D.", "EY2 D IY1"), 
-  ("A.M.", "EY2 EH1 M"), 
-  ("A.S", "EY1 Z"), 
-  ("A42128", "EY1 F AO1 R T UW1 W AH1 N T UW1 EY1 T"), 
-  ("AA", "EY2 EY1"), 
-  ("AAA", "T R IH2 P AH0 L EY1"), 
-  ("AAAI", "T R IH2 P AH0 L EY2 AY1"), 
-  ("AABERG", "AA1 B ER0 G"), 
-  ("AACHEN", "AA1 K AH0 N"), 
-  ("AACHENER", "AA1 K AH0 N ER0"), 
-  ("AAH", "AA1"), 
-  ("AAKER", "AA1 K ER0"), 
-  ("AALIYAH", "AA2 L IY1 AA2")]
+testList :: [(String, [String])]
+testList = [("A",["AH0","EY1"]),
+    ("A'S",["EY1 Z"]),
+    ("A.",["EY1"]),
+    ("A.'S",["EY1 Z"]),
+    ("A.D.",["EY2 D IY1"]),
+    ("A.M.",["EY2 EH1 M"]),
+    ("PATRON",["P EY1 T R AH0 N"]),
+    ("PATRONAGE",["P AE1 T R AH0 N IH0 JH","P EY1 T R AH0 N AH0 JH","P EY1 T R AH0 N IH0 JH"]),
+    ("PATRONE",["P AA0 T R OW1 N IY0"]),
+    ("PATRONESS",["P EY1 T R AH0 N AH0 S"]),
+    ("PATRONIZE",["P EY1 T R AH0 N AY2 Z","P AE1 T R AH0 N AY2 Z"]),
+    ("PATRONIZED",["P EY1 T R AH0 N AY2 Z D","P AE1 T R AH0 N AY2 Z D"]),
+    ("PATRONIZES",["P EY1 T R AH0 N AY2 Z AH0 Z"])]
 
 -- Takes two words and compares their phonetic spellings and outputs True
 -- if they're are homophones of each other and false otherwise
@@ -33,40 +29,15 @@ homophone x y = do
     let dict = dictMap
     let phonX = Map.lookup (map toUpper x) dict
     let phonY = Map.lookup (map toUpper y) dict
-    phonX == phonY
+    matchAny phonX phonY
 
-homophone2 :: String -> String -> Bool
-homophone2 x y = phonX == phonY
-    where
-        phonX = convertToPhon x
-        phonY = convertToPhon y    
+-- outputs True if any elem from list xs matches any elem from list ys
+matchAny :: Eq a => Maybe [a] -> Maybe [a] -> Bool
+matchAny Nothing _ = False
+matchAny _ Nothing = False
+matchAny (Just xs) (Just ys) = any ((flip elem) ys) xs
 
 -- Converts the phoneDict into a Map
-dictMap :: Map.Map String String
+dictMap :: Map.Map String [String]
 dictMap = Map.fromList phoneDict
 
-------------------------------------------------------------------------------------
--- If using phoneDict as a list not a Hash Map
-
--- Used if using a List of pairs with key: word, elem: spelling
-lookupDict :: [(String, String)] -> String -> (String, String)
-lookupDict [] _ = ("","")
-lookupDict (d:ds) w
-    | fst d == upperW = d
-    | otherwise = lookupDict ds w
-    where
-        upperW = map toUpper w
-
--- TODO: Switch to using Maybe to handle words not in dictionary
-convertToPhon :: String -> String
-convertToPhon w = phon
-    where
-        (_ , phon) = lookupDict phoneDict w
-
--- helps in converting the dictionary to fit list of pair format
-convertToPairList :: IO ()
-convertToPairList = do
-    s <- readFile "cmudict-list"
-    let newContents = [n | c <- lines s, n <- "(\"" ++ c ++ "\"), "]
-    unless (null newContents) $
-        writeFile "cmudict-list.txt" newContents
