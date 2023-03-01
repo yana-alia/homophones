@@ -558,16 +558,16 @@ homophonesTable
     , ("weigh", "way") ==> True
     , ("we", "whee") ==> True
     , ("we", "wee") ==> True
-    , ("we will", "we'll") ==> True -- not actually a homophone. contraction
+    , ("we will", "we'll") ==> False -- not actually a homophone. contraction
     , ("we'll", "wheel") ==> True
     , ("weak", "week") ==> True
-    , ("wed", "weed") ==> True
-    , ("weal", "well") ==> True
-    , ("well", "wheel") ==> True
+    , ("we'd", "weed") ==> True
+    , ("weal", "we'll") ==> True
+    , ("we'll", "wheel") ==> True
     , ("wean", "ween") ==> True
     , ("weather", "whether") ==> True
     , ("weaver", "weever") ==> True
-    , ("weir", "were") ==> True
+    , ("weir", "we're") ==> True
     , ("were", "whirr") ==> True
     , ("wet", "whet") ==> True
     , ("wheald", "wheeled") ==> True
@@ -585,9 +585,9 @@ homophonesTable
     , ("why", "y") ==> True
     , ("yaw", "yore") ==> True
     , ("yore", "your") ==> True
-    , ("your", "youre") ==> True
+    , ("your", "you're") ==> True
     , ("yoke", "yolk") ==> True
-    , ("youll", "yule") ==> True
+    , ("you'll", "yule") ==> True
     ]
   
 allTestCases

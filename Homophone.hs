@@ -5,6 +5,9 @@ import Control.Monad
 import qualified Data.Map as Map
 import Data.IntMap (fromList)
 import Data.Char
+-- import qualified Data.Text as Text (unpack,concatMap)
+-- import qualified Data.Text.IO as Text (readFile)
+import System.IO.Unsafe
 
 -- import MergedDict
 
@@ -25,7 +28,7 @@ testList = [("A",["AH0","EY1"]),
     ("THEIR", ["DH EH1 R"]), 
     ("THERE", ["DH EH1 R"]), 
     ("PATRON",["P EY1 T R AH0 N"]),
-    ("RED", ["R EH1 D"]), 
+    ("RED", ["R EH1 D"]),
     ("REED",["R IY1 D"]),
     ("READ",["R EH1 D","R IY1 D"]),
     ("PATRONAGE",["P AE1 T R AH0 N IH0 JH","P EY1 T R AH0 N AH0 JH","P EY1 T R AH0 N IH0 JH"]),
@@ -48,7 +51,18 @@ matchAny (Just xs) (Just ys) = any (`elem` ys) xs
 
 -- Converts the phoneDict into a Map
 dictMap :: Map.Map String [String]
-dictMap = Map.fromList testList
+dictMap = do
+    let ls = lines getFile
+    let lss = map readDict ls
+    Map.fromList lss
+    where
+        getFile = unsafePerformIO $ do
+            s <- readFile "data/MergedDict.txt"
+            return s
+
+
+readDict :: String -> (String, [String])
+readDict = read
 
 encodeArpabet :: String -> ARPABET
 encodeArpabet s = AA
