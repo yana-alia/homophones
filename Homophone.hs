@@ -5,18 +5,17 @@ import Control.Monad
 import qualified Data.Map as Map
 import Data.IntMap (fromList)
 import Data.Char
--- import qualified Data.Text as Text (unpack,concatMap)
--- import qualified Data.Text.IO as Text (readFile)
 import System.IO.Unsafe
 
--- import MergedDict
+import Format
 
+{-
 data ARPABET = AA | AE | AH | AO | AW | AX | AXR | AY | EH | ER | EY | -- VOWELS
                IH | IX | IY | OW | OY | UH | UW | UX |                 -- VOWELS
                B | CH | D | DH | DX | EL | EM | EN | F | G | HH | JH | -- CONSONENTS
                K | L | M | N | NG | NX | P | Q | R | S | SH | T | TH | -- CONSONENTS
                V | W | WH | Y | Z | ZH                                 -- CONSONENTS
-
+-}
 
 testList :: [(String, [String])]
 testList = [("A",["AH0","EY1"]),
@@ -50,12 +49,12 @@ matchAny _ Nothing = False
 matchAny (Just xs) (Just ys) = any (`elem` ys) xs
 
 -- Converts the phoneDict into a Map
-dictMap :: Map.Map String [String]
-dictMap = do
-    let ls = lines getFile
-    let lss = map readDict ls
-    Map.fromList lss
+dictMap :: Map.Map String [[String]]
+dictMap = Map.fromList $ zip k v
     where
+        lss = map readDict $ lines getFile
+        k = map fst lss -- words in list
+        v = map (map (splitOn ' ') . snd) lss -- formating ARPABET of words (e.g ["R EH1 D","R IY1 D"] -> [["R","EH1","D"],["R","IY1","D"]])
         getFile = unsafePerformIO $ do
             s <- readFile "data/MergedDict.txt"
             return s
@@ -63,6 +62,3 @@ dictMap = do
 
 readDict :: String -> (String, [String])
 readDict = read
-
-encodeArpabet :: String -> ARPABET
-encodeArpabet s = AA

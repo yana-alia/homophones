@@ -10,9 +10,9 @@ convertToPairList = do
     unless (null newContents) $
         writeFile "Convert.txt" newContents
 
-mergeElems :: IO ()
-mergeElems = do
-    let mergedList = mergeElems' testList
+mergeElems :: [(String, [String])] -> IO ()
+mergeElems ls = do
+    let mergedList = mergeElems' ls
     writeFile "merged.txt" (unlines $ map show mergedList)
 
 mergeElems' :: [(String, [String])] -> [(String, [String])]
