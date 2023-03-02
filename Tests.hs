@@ -66,7 +66,7 @@ homophonesTable
     , ("arc", "ark") ==> True
     , ("are", "ar") ==> True
     , ("ah", "r") ==> True
-    , ("arent", "aunt") ==> True
+    , ("aren't", "aunt") ==> True
     , ("ate", "eight") ==> True
     , ("auger", "augur") ==> True
     , ("auk", "orc") ==> True
@@ -197,7 +197,7 @@ homophonesTable
     , ("duct", "ducked") ==> True
     , ("earn", "urn") ==> True
     , ("ease", "ee") ==> True -- ee = multiple Es (will not work with current method)
-    , ("ease", "es") ==> True
+    , ("ease", "es") ==> True 
     , ("eery", "eyrie") ==> True
     , ("ewe", "u") ==> True
     , ("yew", "you") ==> True
@@ -514,7 +514,7 @@ homophonesTable
     , ("terce", "terse") ==> True
     , ("tern", "turn") ==> True
     , ("there", "their") ==> True
-    , ("their", "theyre") ==> True
+    , ("their", "they're") ==> True
     , ("threw", "through") ==> True
     , ("throes", "throws") ==> True
     , ("throne", "thrown") ==> True
@@ -570,7 +570,7 @@ homophonesTable
     , ("weir", "we're") ==> True
     , ("were", "whirr") ==> True
     , ("wet", "whet") ==> True
-    , ("wheald", "wheeled") ==> True
+    , ("wheald", "wheeled") ==> True -- wheald is not in the dictionary
     , ("which", "witch") ==> True
     , ("whig", "wig") ==> True
     , ("while", "wile") ==> True
@@ -579,11 +579,11 @@ homophonesTable
     , ("whirled", "world") ==> True
     , ("whit", "wit") ==> True
     , ("white", "wight") ==> True
-    , ("whos", "whose") ==> True
+    , ("who's", "whose") ==> True
     , ("woe", "whoa") ==> True
     , ("wood", "would") ==> True
     , ("why", "y") ==> True
-    , ("yaw", "yore") ==> True
+    , ("yaw", "yore") ==> True -- British accent
     , ("yore", "your") ==> True
     , ("your", "you're") ==> True
     , ("yoke", "yolk") ==> True
@@ -591,7 +591,7 @@ homophonesTable
     ]
   
 allTestCases
-  = [ TestCase "Morse homophoneTable" (uncurry homophone) homophonesTable ]
+      = [ TestCase "Morse homophoneTable" (uncurry homophone) homophonesTable ]
 
 runTests = mapM_ goTest allTestCases
 

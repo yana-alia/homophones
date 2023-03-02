@@ -17,6 +17,9 @@ data ARPABET = AA | AE | AH | AO | AW | AX | AXR | AY | EH | ER | EY | -- VOWELS
                V | W | WH | Y | Z | ZH                                 -- CONSONENTS
 -}
 
+data Accent = British | Cockney
+            deriving (Eq)
+
 testList :: [(String, [String])]
 testList = [("A",["AH0","EY1"]),
     ("A'S",["EY1 Z"]),
@@ -48,17 +51,32 @@ matchAny Nothing _ = False
 matchAny _ Nothing = False
 matchAny (Just xs) (Just ys) = any (`elem` ys) xs
 
--- Converts the phoneDict into a Map
+-- Converts the phoneDict into a HashMap for faster lookup
 dictMap :: Map.Map String [[String]]
-dictMap = Map.fromList $ zip k v
+dictMap = Map.fromList file
     where
-        lss = map readDict $ lines getFile
-        k = map fst lss -- words in list
-        v = map (map (splitOn ' ') . snd) lss -- formating ARPABET of words (e.g ["R EH1 D","R IY1 D"] -> [["R","EH1","D"],["R","IY1","D"]])
+        file = map readDict $ lines getFile
         getFile = unsafePerformIO $ do
-            s <- readFile "data/MergedDict.txt"
+            s <- readFile "data/ArpabetDict.txt"
             return s
 
-
-readDict :: String -> (String, [String])
+-- e.g "("A",["AH","EY"])" -> ("A",["AH","EY"]) with correct type specified assuming
+-- formatting of elements in the String matches specified type
+readDict :: String -> (String, [[String]])
 readDict = read
+
+-- ============================================= ACCENTS ============================================= --
+
+convertToAccent :: [String] -> Accent -> [String]
+convertToAccent [] _ = []
+convertToAccent (a:as) act = a' ++ convertToAccent as act
+    where
+        a' = case act of
+                    British -> convertToBritish a
+                    _ -> [a]
+
+-- TODO: remove empty string from omitting "R"
+convertToBritish :: String -> [String]
+convertToBritish "R" = []
+convertToBritish "OW" = ["AX","UH"] 
+convertToBritish _ = ["rbit"]

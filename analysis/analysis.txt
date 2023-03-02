@@ -1,0 +1,5 @@
+listPhoneDictTiming = shows computational time when using a list of tuples from word to pronunciation
+
+mapPhoneDictTiming = shows comp time when using a HashMap instead
+
+multPhone = shows increase in no. of passed tests when supporting multiple pronunciations for a word
