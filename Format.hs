@@ -20,7 +20,8 @@ mergeElems ls = do
     writeFile "merged.txt" (unlines $ map show mergedList)
 
 mergeElems' :: [(String, [String])] -> [(String, [String])]
-mergeElems' (l:[]) = [l]
+mergeElems' [] = []
+mergeElems' [l] = [l]
 mergeElems' (l:ls:lss)
     | pK1 == pK2 = mergeElems' ((pK1, snd l ++ snd ls):lss)
     | otherwise  = l: mergeElems' (ls:lss)
@@ -31,7 +32,7 @@ mergeElems' (l:ls:lss)
 -- splits list on specified elem
 -- e.g splitOn ' ' "abc 123" = ["abc","123"]
 splitOn :: Eq a => a -> [a] -> [[a]]
-splitOn d [] = []
+splitOn _ [] = []
 splitOn d s = x : splitOn d (drop 1 y) 
     where
         (x,y) = span (/= d) s
@@ -45,8 +46,7 @@ convertNoStress = writeFile "ArpabetDict.txt" (unlines $ map show tuple)
     where
         tuple = map (splitArpabet . readDictStress) $ lines getFile
         getFile = unsafePerformIO $ do
-            s <- readFile "data/ArpabetDictStress.txt"
-            return s
+            readFile "data/ArpabetDictStress.txt"
 
         readDictStress :: String -> (String, [String])
         readDictStress = read

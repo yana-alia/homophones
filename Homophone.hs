@@ -41,9 +41,13 @@ testList = [("A",["AH0","EY1"]),
 homophone :: String -> String -> Bool
 homophone x y = do 
     let dict = dictMap
-    let phonX = Map.lookup (map toUpper x) dict
-    let phonY = Map.lookup (map toUpper y) dict
+    let phonX = lookupArpabet x dict
+    let phonY = lookupArpabet y dict
     matchAny phonX phonY
+
+-- look up ARPABET spelling of word if exists in dictionary
+lookupArpabet :: String -> Map.Map String [[String]] -> Maybe [[String]]
+lookupArpabet s = Map.lookup (map toUpper s)
 
 -- outputs True if any elem from list xs matches any elem from list ys
 matchAny :: Eq a => Maybe [a] -> Maybe [a] -> Bool
@@ -57,8 +61,7 @@ dictMap = Map.fromList file
     where
         file = map readDict $ lines getFile
         getFile = unsafePerformIO $ do
-            s <- readFile "data/ArpabetDict.txt"
-            return s
+            readFile "data/ArpabetDict.txt"
 
 -- e.g "("A",["AH","EY"])" -> ("A",["AH","EY"]) with correct type specified assuming
 -- formatting of elements in the String matches specified type
