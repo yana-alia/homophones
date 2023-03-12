@@ -6,6 +6,7 @@ import qualified Data.Map as Map
 import Data.IntMap (fromList)
 import Data.Char
 import System.IO.Unsafe
+import Data.Maybe
 
 import Format
 
@@ -19,6 +20,9 @@ data ARPABET = AA | AE | AH | AO | AW | AX | AXR | AY | EH | ER | EY | -- VOWELS
 
 data Accent = British | Cockney
             deriving (Eq)
+
+type Arpabet = String
+type Pronunciation = [Arpabet]
 
 testList :: [(String, [String])]
 testList = [("A",["AH0","EY1"]),
@@ -36,27 +40,39 @@ testList = [("A",["AH0","EY1"]),
     ("PATRONAGE",["P AE1 T R AH0 N IH0 JH","P EY1 T R AH0 N AH0 JH","P EY1 T R AH0 N IH0 JH"]),
     ("PATRONIZES",["P EY1 T R AH0 N AY2 Z AH0 Z"])]
 
+-- TODO: changes out put type to be an int similarity level to support fuzzy homophones
+
 -- Takes two words and compares their phonetic spellings and outputs True
 -- if they're are homophones of each other and false otherwise
-homophone :: String -> String -> Bool
-homophone x y = do 
-    let dict = dictMap
-    let phonX = lookupArpabet x dict
-    let phonY = lookupArpabet y dict
-    matchAny phonX phonY
+homophone :: [String] -> [String] -> Bool
+homophone x y = matchAny (combine phonX) (combine phonY)
+    where
+        phonX = map (fromMaybe [] . lookupArpabet) x
+        phonY = map (fromMaybe [] . lookupArpabet) y
+
+-- provides a list of all combination of pronunciations that can exist for a list of words
+-- e.g. ["a","why"] which has pronunciations: [[["AH"],["EY"]],[["W","AY"],["HH","W","AY"]]]
+--      outputs [["AH","W","AY"],["AH","HH","W","AY"],["EY","W","AY"],["EY","HH","W","AY"]]
+combine :: [[Pronunciation]] -> [Pronunciation]
+combine [] = []
+combine [w] = w
+combine (w : ws) = combine' w (combine ws)
+    where
+        combine' :: [Pronunciation] -> [Pronunciation] -> [Pronunciation]
+        combine' x y = [xs ++ ys | xs <- x, ys <- y]
+
 
 -- look up ARPABET spelling of word if exists in dictionary
-lookupArpabet :: String -> Map.Map String [[String]] -> Maybe [[String]]
-lookupArpabet s = Map.lookup (map toUpper s)
+lookupArpabet :: String -> Maybe [Pronunciation]
+lookupArpabet s = Map.lookup (map toUpper s) dictMap
 
 -- outputs True if any elem from list xs matches any elem from list ys
-matchAny :: Eq a => Maybe [a] -> Maybe [a] -> Bool
-matchAny Nothing _ = False
-matchAny _ Nothing = False
-matchAny (Just xs) (Just ys) = any (`elem` ys) xs
+matchAny :: Eq a => [a] -> [a] -> Bool
+matchAny [] _ = False
+matchAny xs ys = any (`elem` ys) xs
 
 -- Converts the phoneDict into a HashMap for faster lookup
-dictMap :: Map.Map String [[String]]
+dictMap :: Map.Map String [Pronunciation]
 dictMap = Map.fromList file
     where
         file = map readDict $ lines getFile

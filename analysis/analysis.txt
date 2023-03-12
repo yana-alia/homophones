@@ -3,3 +3,25 @@ listPhoneDictTiming = shows computational time when using a list of tuples from 
 mapPhoneDictTiming = shows comp time when using a HashMap instead
 
 multPhone = shows increase in no. of passed tests when supporting multiple pronunciations for a word
+
+
+fuzzy match, multiple words, dialect, rhyme, spoonerisms
+
+former spoken on the radio
+ |      |
+ past   oral   = pastoral
+
+
+ splitNopt = split into multiple words
+
+ ["past","oral"] and ["pastoral"] = true
+
+ homophone of charades is a charade of homophones
+
+
+ ghci> homophone ["in","close"] ["enclose"]
+    True
+    
+ Arpabet cluster
+
+ [ER AE]
