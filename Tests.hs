@@ -601,5 +601,5 @@ runTests = mapM_ goTest allTestCases
 
 main = do
     putStrLn "Starting..."
-    time $ runTests
+    time runTests
     putStrLn "Done."
