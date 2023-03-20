@@ -590,11 +590,17 @@ homophonesTable
     , (["you'll"], ["yule"]) ==> True
     ]
   
+homophones
+  = [ (["deign"], ["dane"]) ==> True
+    ] 
 multWords
   = [ (["in","close"], ["enclose"]) ==> True
+    , (["add","hock"], ["ad-hoc"]) ==> True
+    , (["high","jack"], ["hijack"]) ==> True
     ]
 allTestCases
       = [ TestCase "Morse homophoneTable" (uncurry homophone) homophonesTable
+        , TestCase "Pure homophones" (uncurry homophone) homophones
         , TestCase "Multi-word homophones" (uncurry homophone) multWords ]
 
 runTests = mapM_ goTest allTestCases
