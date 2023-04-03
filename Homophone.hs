@@ -10,19 +10,18 @@ import Data.Maybe
 
 import Format
 
-{-
+
 data ARPABET = AA | AE | AH | AO | AW | AX | AXR | AY | EH | ER | EY | -- VOWELS
                IH | IX | IY | OW | OY | UH | UW | UX |                 -- VOWELS
                B | CH | D | DH | DX | EL | EM | EN | F | G | HH | JH | -- CONSONENTS
                K | L | M | N | NG | NX | P | Q | R | S | SH | T | TH | -- CONSONENTS
                V | W | WH | Y | Z | ZH                                 -- CONSONENTS
--}
+            deriving (Show, Ord, Eq, Read)
 
 data Accent = British | Cockney
             deriving (Eq)
 
-type Arpabet = String
-type Pronunciation = [Arpabet]
+type Pronunciation = [ARPABET]
 
 testList :: [(String, [String])]
 testList = [("A",["AH0","EY1"]),
@@ -49,6 +48,17 @@ homophone x y = matchAny (combine phonX) (combine phonY)
     where
         phonX = map (fromMaybe [] . lookupArpabet) x
         phonY = map (fromMaybe [] . lookupArpabet) y
+
+-- the lower the score, the more similar the words are. (0 score = pure homophone)
+-- assumptions:
+--      * length of both words should be similar to be considered fuzzy
+--      * 100 is arbitrary high number to depict infinity score
+fuzzy [] _ = 100
+fuzzy _ [] = 100
+fuzzy (x:xs) (y:ys) = score x y + fuzzy xs ys
+    where
+        -- TODO!!!!
+        score = undefined
 
 -- provides a list of all combination of pronunciations that can exist for a list of words
 -- e.g. ["a","why"] which has pronunciations: [[["AH"],["EY"]],[["W","AY"],["HH","W","AY"]]]
@@ -79,9 +89,9 @@ dictMap = Map.fromList file
         getFile = unsafePerformIO $ do
             readFile "data/ArpabetDict.txt"
 
--- e.g "("A",["AH","EY"])" -> ("A",["AH","EY"]) with correct type specified assuming
+-- e.g "("A",[AH,EY])" -> ("A",[AH,EY]) with correct type specified assuming
 -- formatting of elements in the String matches specified type
-readDict :: String -> (String, [[String]])
+readDict :: String -> (String, [[ARPABET]])
 readDict = read
 
 -- ============================================= ACCENTS ============================================= --
@@ -99,3 +109,5 @@ convertToBritish :: String -> [String]
 convertToBritish "R" = []
 convertToBritish "OW" = ["AX","UH"] 
 convertToBritish _ = ["rbit"]
+
+-- ============================================= CLUSTERING ============================================= --

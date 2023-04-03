@@ -4,6 +4,9 @@ mapPhoneDictTiming = shows comp time when using a HashMap instead
 
 multPhone = shows increase in no. of passed tests when supporting multiple pronunciations for a word
 
+usingARPABETtype = switching from representing arpabet with strings to its own data type to implement arrays. 
+                  Initialisation of dict is noticably slower (~5 secs -> ~40 secs)
+
 
 fuzzy match, multiple words, dialect, rhyme, spoonerisms
 
@@ -22,6 +25,16 @@ former spoken on the radio
  ghci> homophone ["in","close"] ["enclose"]
     True
     
- Arpabet cluster
+current implementation: takes 2 words and checks if it is homophone
 
- [ER AE]
+possible implementation: takes a string and creates homophones
+   - exceedingly more computationally heavy if fuzzy matching is implemented
+      (literally have to check every word in the dictionary and output top 10 ish choices)
+
+
+["anele"] ["an","eel"] -- anele not in dict
+
+["key","naps"] ["kneecaps"] -- spoonerisms. convert to arpabet then swap
+["tidied"] ["tie","deed"] -- fuzzy homophone. tidied doesn't exist in dict
+
+think abt usage of this other than crossword

@@ -42,7 +42,7 @@ splitOn d s = x : splitOn d (drop 1 y)
 -- Formats arpabetDict txt file to have [[String]] pronunciation instead of [String] and omits stress numbers
 -- (e.g ["R EH1 D","R IY1 D"] -> [["R","EH","D"],["R","IY","D"]])
 convertNoStress :: IO ()
-convertNoStress = writeFile "ArpabetDict.txt" (unlines $ map show tuple)
+convertNoStress = writeFile "ArpabetDictCopy.txt" (unlines $ map show tuple)
     where
         tuple = map (splitArpabet . readDictStress) $ lines getFile
         getFile = unsafePerformIO $ do
