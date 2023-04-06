@@ -7,6 +7,16 @@ multPhone = shows increase in no. of passed tests when supporting multiple pronu
 usingARPABETtype = switching from representing arpabet with strings to its own data type to implement arrays. 
                   Initialisation of dict is noticably slower (~5 secs -> ~40 secs)
 
+fuzzy1 = Threshold: 5. 
+         Number of tests passing incresed from 412 -> 429 out of 577
+         Many exceptions of "Exception: Prelude.minimum: empty list" which indicates word is not in dictionary
+         Many failed tests are words where it is expected to pronounce individual letters like "is"
+            (pronouncing "i" and "s" seperately can be similar to "eyes")
+         Possible to add extra test cases where given words like "he will", the program converts it to "he'll" 
+
+fuzzy2 = Seperated tests that do not pass because they don't exist in dictionary. 431/480 homophoneTable passed
+         Code has not changed from fuzzy1 
+
 
 fuzzy match, multiple words, dialect, rhyme, spoonerisms
 
