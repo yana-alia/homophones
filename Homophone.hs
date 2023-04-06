@@ -30,7 +30,7 @@ pureHomophone x y = matchAny (combine phonX) (combine phonY)
 -- Takes two words and compares their phonetic spellings and outputs True
 -- if their fuzzy score is below a certain threshold
 homophone :: [String] -> [String] -> Bool
-homophone x y = fuzzyScore (combine phonX) (combine phonY) < 5
+homophone x y = fuzzyScore (combine phonX) (combine phonY) < 100
     where
         phonX = map (fromMaybe [] . lookupArpabet) x
         phonY = map (fromMaybe [] . lookupArpabet) y

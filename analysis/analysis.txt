@@ -16,6 +16,7 @@ fuzzy1 = Threshold: 5.
 
 fuzzy2 = Seperated tests that do not pass because they don't exist in dictionary. 431/480 homophoneTable passed
          Code has not changed from fuzzy1 
+         Most failed test cases are either words not in the dictionary or words that have R which is silent in British
 
 
 fuzzy match, multiple words, dialect, rhyme, spoonerisms

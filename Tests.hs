@@ -258,7 +258,7 @@ homophonesTable
     , (["lean"], ["lien"]) ==> True
     , (["lessen"], ["lesson"]) ==> True
     , (["levee"], ["levy"]) ==> True
-    , (["liar"], ["lyre"]) ==> True
+    , (["liar"], ["lyre"]) ==> True -- [L,AY,ER] [L,AY,R]
     , (["licence"], ["license"]) ==> True
     , (["licker"], ["liquor"]) ==> True
     , (["lie"], ["lye"]) ==> True
@@ -402,11 +402,11 @@ homophonesTable
     , (["some"], ["sum"]) ==> True
     , (["son"], ["sun"]) ==> True
     , (["sort"], ["sought"]) ==> True
-    , (["spa"], ["spar"]) ==> True
+    , (["spa"], ["spar"]) ==> True -- [S,P,AA] [S,P,AA,R]
     , (["staid"], ["stayed"]) ==> True
     , (["stair"], ["stare"]) ==> True
     , (["stake"], ["steak"]) ==> True
-    , (["stalk"], ["stork"]) ==> True
+    , (["stalk"], ["stork"]) ==> True -- [S,T,AO,K] [S,T,AO,R,K]
     , (["stationary"], ["stationery"]) ==> True
     , (["steal"], ["steel"]) ==> True
     , (["stile"], ["style"]) ==> True
@@ -416,9 +416,9 @@ homophonesTable
     , (["sweet"], ["suite"]) ==> True
     , (["tacks"], ["tax"]) ==> True
     , (["tale"], ["tail"]) ==> True
-    , (["talk"], ["torque"]) ==> True
+    , (["talk"], ["torque"]) ==> True -- [T,AO,K] [T,AO,R,K]
     , (["taught"], ["taut"]) ==> True
-    , (["taught"], ["tort"]) ==> True
+    , (["taught"], ["tort"]) ==> True -- [T,AO,T] [T,AO,R,T]
     , (["te"], ["tea"]) ==> True
     , (["tea"], ["tee"]) ==> True
     , (["tee"], ["t"]) ==> True
@@ -426,7 +426,7 @@ homophonesTable
     , (["tear"], ["tier"]) ==> True
     , (["teas"], ["tease"]) ==> True
     , (["tenner"], ["tenor"]) ==> True
-    , (["tern"], ["turn"]) ==> True
+    , (["tern"], ["turn"]) ==> True -- [T,ER,N,Z] [T,ER,N]
     , (["there"], ["their"]) ==> True
     , (["their"], ["they're"]) ==> True
     , (["threw"], ["through"]) ==> True
@@ -450,7 +450,7 @@ homophonesTable
     , (["vain"], ["vane"]) ==> True
     , (["vane"], ["vein"]) ==> True
     , (["vale"], ["veil"]) ==> True
-    , (["vial"], ["vile"]) ==> True
+    , (["vial"], ["vile"]) ==> True -- [V,AY,AH,L] [V,AY,L]
     , (["wail"], ["wale"]) ==> True
     , (["wale"], ["whale"]) ==> True
     , (["wain"], ["wane"]) ==> True
