@@ -73,12 +73,64 @@ ZH 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 1
 
 -}
 
-
 isVowel :: ARPABET -> Bool
 isVowel arp = arp >= AA && arp <= UX
 
 isConsonent :: ARPABET -> Bool
 isConsonent = not . isVowel
+
+toArpabet :: String -> ARPABET
+toArpabet "AA" = AA
+toArpabet "AE" = AE
+toArpabet "AH" = AH
+toArpabet "AO" = AO
+toArpabet "AW" = AW
+toArpabet "AX" = AX
+toArpabet "AXR" = AXR
+toArpabet "AY" = AY
+toArpabet "EH" = EH
+toArpabet "ER" = ER
+toArpabet "EY" = EY
+toArpabet "IH" = IH
+toArpabet "IX" = IX
+toArpabet "IY" = IY
+toArpabet "OW" = OW
+toArpabet "OY" = OY
+toArpabet "UH" = UH
+toArpabet "UW" = UW
+toArpabet "UX" = UX
+toArpabet "B" = B
+toArpabet "CH" = CH
+toArpabet "D" = D
+toArpabet "DH" = DH
+toArpabet "DX" = DX
+toArpabet "EL" = EL
+toArpabet "EM" = EM
+toArpabet "EN" = EN
+toArpabet "F" = F
+toArpabet "G" = G
+toArpabet "HH" = HH
+toArpabet "JH" = JH
+toArpabet "K" = K
+toArpabet "L" = L
+toArpabet "M" = M
+toArpabet "N" = N
+toArpabet "NG" = NG
+toArpabet "NX" = NX
+toArpabet "P" = P
+toArpabet "Q" = Q
+toArpabet "R" = R
+toArpabet "S" = S
+toArpabet "SH" = SH
+toArpabet "T" = T
+toArpabet "TH" = TH
+toArpabet "V" = V
+toArpabet "W" = W
+toArpabet "WH" = WH
+toArpabet "Y" = Y
+toArpabet "Z" = Z
+toArpabet "ZH" = ZH
+toArpabet _ = error "not an ARPABET"
 
 distMatrix :: Array (ARPABET, ARPABET) Int
 distMatrix = array ((AA,AA),(ZH,ZH)) (zip ix val)

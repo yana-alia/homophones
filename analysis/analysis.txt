@@ -18,6 +18,10 @@ fuzzy2 = Seperated tests that do not pass because they don't exist in dictionary
          Code has not changed from fuzzy1 
          Most failed test cases are either words not in the dictionary or words that have R which is silent in British
 
+usingStrNFuzzy = Using String dict instead for faster dict loading time. Only convert to Arpabet after lookupArpabet
+                 Significantly faster (30s -> 4s)
+                 Same tests as Fuzzy2. No extra tests should be passing but it increased from 431 to 435 (possible overlook)
+
 
 fuzzy match, multiple words, dialect, rhyme, spoonerisms
 

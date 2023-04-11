@@ -599,6 +599,7 @@ multWords
   = [ (["in","close"], ["enclose"]) ==> True
     , (["add","hock"], ["ad-hoc"]) ==> True
     , (["high","jack"], ["hijack"]) ==> True
+    , (["past","oral"], ["pastoral"]) ==> True -- Fuzzy homophone. Remove "R"
     ]
 allTestCases
       = [ TestCase "Morse homophoneTable" (uncurry homophone) homophonesTable
