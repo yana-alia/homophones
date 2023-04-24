@@ -3,6 +3,7 @@ module Homophone where
 import Debug.Trace
 import Control.Monad
 import qualified Data.Map as Map
+import Data.List
 import Data.IntMap (fromList)
 import Data.Char
 import System.IO.Unsafe
@@ -99,8 +100,17 @@ convertToBritish _ = ["init"]
 
 -- =========================================== REVERSE DICT =========================================== --
 
+homophones :: String -> [String]
+homophones s = map head (group $ sort words)
+    where
+        words = concatMap (fromMaybe [] . lookupWords) arp
+        arp = fromMaybe [] (lookupArpabet s)
+
+-- look up words that corresponds to the given ARPABET spelling if exists in dictionary
+lookupWords :: [String] -> Maybe [String]
+lookupWords s = Map.lookup s revDictMap
+
 -- Converts the RevArpabetDict into a HashMap for faster lookup
-{-# NOINLINE revDictMap #-}
 revDictMap :: Map.Map [String] [String]
 revDictMap = Map.fromList file
     where

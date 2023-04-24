@@ -592,7 +592,7 @@ homTableNotInDict
     , (["wheald"], ["wheeled"]) ==> True -- wheald is not in the dictionary
     ]
   
-homophones
+homophone
   = [ (["deign"], ["dane"]) ==> True
     ] 
 multWords
@@ -603,7 +603,7 @@ multWords
     ]
 allTestCases
       = [ TestCase "Morse homophoneTable" (uncurry isHomophone) homophonesTable
-        , TestCase "Pure homophones" (uncurry isHomophone) homophones
+        , TestCase "Pure homophones" (uncurry isHomophone) homophone
         , TestCase "Multi-word homophones" (uncurry isHomophone) multWords ]
 
 runTests = mapM_ goTest allTestCases
