@@ -25,6 +25,12 @@ usingStrNFuzzy = Using String dict instead for faster dict loading time. Only co
 
 fuzzy match, multiple words, dialect, rhyme, spoonerisms
 
+TODO:
+- Add false positives in tests to finetune fuzzy search
+- Remove Rs for British accent
+- spoonerisms
+- Matches words not in dictionary? Or partially not in dictionary (past tense, letter pronunciations)
+
 former spoken on the radio
  |      |
  past   oral   = pastoral
@@ -50,6 +56,7 @@ possible implementation: takes a string and creates homophones
 ["anele"] ["an","eel"] -- anele not in dict
 
 ["key","naps"] ["kneecaps"] -- spoonerisms. convert to arpabet then swap
+remunerator, re numerator -- spoonerisms. quote for future works
 ["tidied"] ["tie","deed"] -- fuzzy homophone. tidied doesn't exist in dict
 
 think abt usage of this other than crossword

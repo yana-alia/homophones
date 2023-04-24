@@ -112347,7 +112347,7 @@
 ("TERMITE",[[T,ER,M,AY,T]])
 ("TERMITES",[[T,ER,M,AY,T,S]])
 ("TERMS",[[T,ER,M,Z]])
-("TERN",[[T,ER,N,Z]])
+("TERN",[[T,ER,N]])
 ("TERNES",[[T,ER,N,Z]])
 ("TERNS",[[T,ER,N,Z]])
 ("TERPENING",[[T,ER,P,AH,N,IH,NG]])

@@ -19,16 +19,16 @@ type Pronunciation = [ARPABET]
 
 -- Takes two words and compares their phonetic spellings and outputs True
 -- if they are pure homophones of each other and false otherwise
-pureHomophone :: [String] -> [String] -> Bool
-pureHomophone x y = matchAny (combine phonX) (combine phonY)
+isPureHomophone :: [String] -> [String] -> Bool
+isPureHomophone x y = matchAny (combine phonX) (combine phonY)
     where
         phonX = map (maybe [] (map (map toArpabet)) . lookupArpabet) x
         phonY = map (maybe [] (map (map toArpabet)) . lookupArpabet) y
 
 -- Takes two words and compares their phonetic spellings and outputs True
 -- if their fuzzy score is below a certain threshold
-homophone :: [String] -> [String] -> Bool
-homophone x y = fuzzyScore (combine phonX) (combine phonY) < 100
+isHomophone :: [String] -> [String] -> Bool
+isHomophone x y = fuzzyScore (combine phonX) (combine phonY) < 100
     where
         phonX = map (maybe [] (map (map toArpabet)) . lookupArpabet) x
         phonY = map (maybe [] (map (map toArpabet)) . lookupArpabet) y
@@ -67,7 +67,8 @@ matchAny :: Eq a => [a] -> [a] -> Bool
 matchAny [] _  = False
 matchAny xs ys = any (`elem` ys) xs
 
--- Converts the phoneDict into a HashMap for faster lookup
+-- Converts the ArpabetDict into a HashMap for faster lookup
+{-# NOINLINE dictMap #-}
 dictMap :: Map.Map String [[String]]
 dictMap = Map.fromList file
     where
@@ -96,5 +97,16 @@ convertToBritish "R" = []
 convertToBritish "OW" = ["AX","UH"] 
 convertToBritish _ = ["init"]
 
--- ============================================= CLUSTERING ============================================= --
+-- =========================================== REVERSE DICT =========================================== --
 
+-- Converts the RevArpabetDict into a HashMap for faster lookup
+{-# NOINLINE revDictMap #-}
+revDictMap :: Map.Map [String] [String]
+revDictMap = Map.fromList file
+    where
+        file    = map readRevDict $ lines getFile
+        getFile = unsafePerformIO $ do
+            readFile "data/RevArpabetDict.txt"
+
+readRevDict :: String -> ([String], [String])
+readRevDict = read

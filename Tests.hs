@@ -602,9 +602,9 @@ multWords
     , (["past","oral"], ["pastoral"]) ==> True -- Fuzzy homophone. Remove "R"
     ]
 allTestCases
-      = [ TestCase "Morse homophoneTable" (uncurry homophone) homophonesTable
-        , TestCase "Pure homophones" (uncurry homophone) homophones
-        , TestCase "Multi-word homophones" (uncurry homophone) multWords ]
+      = [ TestCase "Morse homophoneTable" (uncurry isHomophone) homophonesTable
+        , TestCase "Pure homophones" (uncurry isHomophone) homophones
+        , TestCase "Multi-word homophones" (uncurry isHomophone) multWords ]
 
 runTests = mapM_ goTest allTestCases
 
