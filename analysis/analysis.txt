@@ -20,21 +20,23 @@ fuzzy2 = Seperated tests that do not pass because they don't exist in dictionary
 
 usingStrNFuzzy = Using String dict instead for faster dict loading time. Only convert to Arpabet after lookupArpabet
                  Significantly faster (30s -> 4s)
-                 Same tests as Fuzzy2. No extra tests should be passing but it increased from 431 to 435 (possible overlook)
+                 Same tests as Fuzzy2. No extra tests should be passing but it increased from 431 to 436 (possible overlook)
 
-
-fuzzy match, multiple words, dialect, rhyme, spoonerisms
+convertToBRitish = Omits R sounds at the end of syllables. Also edited R to ER score mapping (100 -> 3)
+                   Passing tests increased from 436 -> 467
 
 TODO:
 - Add false positives in tests to finetune fuzzy search
 - Remove Rs for British accent
-- spoonerisms
+- add more accent features
+- multiple words support for homophones rev dict function
+- spoonerisms, rhyming, etc.
 - Matches words not in dictionary? Or partially not in dictionary (past tense, letter pronunciations)
 
 former spoken on the radio
  |      |
  past   oral   = pastoral
-
+ ["P","AE","S","T"] + ["AO","R","AH","L"] = ["P","AE","S","T","ER","AH","L"]
 
  splitNopt = split into multiple words
 
@@ -45,12 +47,6 @@ former spoken on the radio
 
  ghci> homophone ["in","close"] ["enclose"]
     True
-    
-current implementation: takes 2 words and checks if it is homophone
-
-possible implementation: takes a string and creates homophones
-   - exceedingly more computationally heavy if fuzzy matching is implemented
-      (literally have to check every word in the dictionary and output top 10 ish choices)
 
 
 ["anele"] ["an","eel"] -- anele not in dict
@@ -59,4 +55,18 @@ possible implementation: takes a string and creates homophones
 remunerator, re numerator -- spoonerisms. quote for future works
 ["tidied"] ["tie","deed"] -- fuzzy homophone. tidied doesn't exist in dict
 
-think abt usage of this other than crossword
+think abt usage of this other than crossword:
+- speech recognition, especially from non native speakers with accents so fuzzy homophone
+   can catch it.
+
+
+given [[...,high,tall,..],[jack,...]] we could filter stuff that obviously is not a homophone of hijack
+   to save computational time but we sacrifice this for simpler code.
+
+
+rev dictionary is to construct data for testing (especially fuzzy homophone)
+
+mention in report that:
+we can construct specific tables for specific accents.
+we take a semantic approach compared to using Neural Network (dtaa already available)
+"conger" and "conga" should not be a homophone despite being in homophoneTable (same with "pascal" n "paschal")

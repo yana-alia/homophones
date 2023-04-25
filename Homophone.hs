@@ -13,24 +13,26 @@ import Data.Array
 import Format
 import Arpabet
 
-data Accent = British | Cockney
-            deriving (Eq)
+data Accent = British | Cockney | None | All
+            deriving (Eq, Show)
 
 type Pronunciation = [ARPABET]
 
 -- Takes two words and compares their phonetic spellings and outputs True
 -- if they are pure homophones of each other and false otherwise
-isPureHomophone :: [String] -> [String] -> Bool
-isPureHomophone x y = matchAny (combine phonX) (combine phonY)
+isPureHomophone :: [String] -> [String] -> Accent -> Bool
+isPureHomophone x y acc = matchAny (combine phonX) (combine phonY)
     where
         phonX = map (maybe [] (map (map toArpabet)) . lookupArpabet) x
         phonY = map (maybe [] (map (map toArpabet)) . lookupArpabet) y
 
 -- Takes two words and compares their phonetic spellings and outputs True
 -- if their fuzzy score is below a certain threshold
-isHomophone :: [String] -> [String] -> Bool
-isHomophone x y = fuzzyScore (combine phonX) (combine phonY) < 100
+isHomophone :: [String] -> [String] -> Accent -> Bool
+isHomophone x y acc = fuzzyScore combX combY < 100
     where
+        combX = convertToAccent acc (combine phonX)
+        combY = convertToAccent acc (combine phonY)
         phonX = map (maybe [] (map (map toArpabet)) . lookupArpabet) x
         phonY = map (maybe [] (map (map toArpabet)) . lookupArpabet) y
         
@@ -84,19 +86,20 @@ readDict = read
 
 -- ============================================= ACCENTS ============================================= --
 
-convertToAccent :: [String] -> Accent -> [String]
-convertToAccent [] _ = []
-convertToAccent (a:as) act = a' ++ convertToAccent as act
-    where
-        a' = case act of
-                    British -> convertToBritish a
-                    _ -> [a]
+convertToAccent :: Accent -> [Pronunciation] -> [Pronunciation]
+convertToAccent None ls = ls
+convertToAccent British ls = map convertToBritish ls
+convertToAccent All ls = map head . group . sort $ map convertToBritish ls ++ ls
 
--- TODO: remove empty string from omitting "R"
-convertToBritish :: String -> [String]
-convertToBritish "R" = []
-convertToBritish "OW" = ["AX","UH"] 
-convertToBritish _ = ["init"]
+-- (map head . group . sort) is O(N log N) compared to O(N^2) of nub
+convertToBritish :: [ARPABET] -> [ARPABET]
+convertToBritish []  = []
+convertToBritish [x] = [x | x /= R]
+convertToBritish (R : xs)
+    | isConsonent $ head xs = convertToBritish xs
+    | otherwise = R : convertToBritish xs
+convertToBritish (x : xs) = x : convertToBritish xs
+
 
 -- =========================================== REVERSE DICT =========================================== --
 
@@ -111,6 +114,7 @@ lookupWords :: [String] -> Maybe [String]
 lookupWords s = Map.lookup s revDictMap
 
 -- Converts the RevArpabetDict into a HashMap for faster lookup
+{-# NOINLINE revDictMap #-}
 revDictMap :: Map.Map [String] [String]
 revDictMap = Map.fromList file
     where
