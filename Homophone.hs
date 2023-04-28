@@ -10,11 +10,10 @@ import System.IO.Unsafe
 import Data.Maybe
 import Data.Array
 
-import Format
 import Arpabet
 
 data Accent = British | Cockney | None | All
-            deriving (Eq, Show)
+            deriving (Eq, Show, Read)
 
 type Pronunciation = [ARPABET]
 
@@ -50,8 +49,8 @@ fuzzy _ [] = 100
 fuzzy (x:xs) (y:ys) = distMatrix ! (x, y) + fuzzy xs ys
 
 -- provides a list of all combination of pronunciations that can exist for a list of words
--- e.g. ["a","why"] which has pronunciations: [[["AH"],["EY"]],[["W","AY"],["HH","W","AY"]]]
---      outputs [["AH","W","AY"],["AH","HH","W","AY"],["EY","W","AY"],["EY","HH","W","AY"]]
+-- e.g. ["a","why"] which has pronunciations: [[[AH],[EY]],[[W,AY],[HH,W,AY]]]
+--      outputs [[AH,W,AY],[AH,HH,W,AY],[EY,W,AY],[EY,HH,W,AY]]
 combine :: [[Pronunciation]] -> [Pronunciation]
 combine []       = []
 combine [w]      = w
@@ -124,3 +123,14 @@ revDictMap = Map.fromList file
 
 readRevDict :: String -> ([String], [String])
 readRevDict = read
+
+-- TODO!!!!
+-- Generate multiple Arpabet spellings that sound similar to given Pronunciation.
+-- Only allowed to make 2 changes to avoid increasing complexity
+-- e.g. [R,AE,D] -> [[R,EH,D],[R,AE,DH],[R,EH,T],[R,UH,D],...]
+fuzzyArpabet :: Pronunciation -> [Pronunciation]
+fuzzyArpabet = fuzzyArpabet' 0
+
+fuzzyArpabet' :: Int -> Pronunciation -> [Pronunciation]
+fuzzyArpabet' 2 _ = []
+fuzzyArpabet' n (x : xs) = undefined

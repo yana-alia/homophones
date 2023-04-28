@@ -7,6 +7,7 @@ module TestSuite where
 import Control.Exception
 import Control.Monad
 import Data.List
+import qualified Data.Map as Map
 
 import Text.Printf
 import Control.Exception

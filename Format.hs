@@ -5,6 +5,9 @@ import System.IO.Unsafe
 import Data.Char
 import Data.Tuple
 import Data.List
+import qualified Data.Map as Map
+
+import Homophone
 
 -- helps in converting the dictionary to fit list of pair format
 convertToPairList :: IO ()
@@ -102,3 +105,15 @@ splitArpabetRev (k, v) = (k', v)
         k'         = (omitStress . splitOn ' ') k
         -- e.g ["R","EH1","D"] -> ["R","EH","D"]
         omitStress = map (filter (not . isDigit))
+
+-- =================================== TESTCASE GEN =================================== --
+
+checkEqTuple :: Eq a => (a, a) -> (a, a) -> Bool
+checkEqTuple (x, y) (x', y') = x == y' && y == x'
+
+createPureTests :: IO()
+createPureTests = writeFile "tests.txt" (unlines $ map show filtered)
+    where
+        filtered = nubBy checkEqTuple tests
+        tests = filter (uncurry (/=)) [(k, v) | k <- keys, v <- homophones k]
+        keys = Map.keys dictMap

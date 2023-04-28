@@ -1,7 +1,11 @@
 module Tests where
 
+import System.IO.Unsafe
+import qualified Data.Map as Map
+
 import TestSuite
 import Homophone
+
 
 {-
     Homophones based off of homophonesTable from Morse solver. 
@@ -601,9 +605,20 @@ multWords
     , (["high","jack"], ["hijack"], All) ==> True
     , (["past","oral"], ["pastoral"], All) ==> True -- Fuzzy homophone. Remove "R"
     ]
+
+{-# NOINLINE megaTest #-}
+megaTest :: [(([String], [String], Accent), Bool)]
+megaTest = map readMegaTest $ lines getFile
+  where
+    getFile = unsafePerformIO $ do
+      readFile "MegaTest.txt"
+
+    readMegaTest :: String -> (([String], [String], Accent), Bool)
+    readMegaTest = read
+
 allTestCases
       = [ TestCase "Morse homophoneTable" (uncurry3 isHomophone) homophonesTable
-        , TestCase "Pure homophones" (uncurry3 isHomophone) homophone
+        , TestCase "Pure homophones" (uncurry3 isHomophone) megaTest
         , TestCase "Multi-word homophones" (uncurry3 isHomophone) multWords ]
 
 runTests = mapM_ goTest allTestCases
