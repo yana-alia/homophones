@@ -9,12 +9,17 @@ data ARPABET = AA | AE | AH | AO | AW | AX | AXR | AY | EH | ER | EY | -- VOWELS
                K | L | M | N | NG | NX | P | Q | R | S | SH | T | TH | -- CONSONENTS
                V | W | WH | Y | Z | ZH                                 -- CONSONENTS
             deriving (Show, Enum, Ord, Eq, Read, Ix)
+            
+-- Constant to define infinity score
+inf :: Float
+inf = 100
+
 {-
 
-* Consonents to Vowels are valued 100 (max distance) and vice versa *
+* Consonents to Vowels are valued inf (max distance) and vice versa *
 
 Special case: CH is similar to K ONLY when it is after a vowel in a syllable (synch vs sink) *TODO*
-              R and ER are similar when it is at the end of a syllable (liar vs lyre) *TODO*
+              R and ER are similar when it is at the end of a syllable (liar vs lyre)
 
    AA  AE  AH  AO  AW  AX  AXR  AY  EH  ER  EY  IH  IX  IY  OW  OY  UH  UW  UX  
 AA  0   3   1   1   3   1    1   5   3   2   3   4   4   4   4   6   3   3   3
@@ -39,37 +44,37 @@ UX  3   3   3   3   3   3    3   6   3   4   4   3   3   3   3   5   1   1   0
 
 
      B  CH   D  DH  DX  EL  EM  EN   F   G  HH  JH   K   L   M   N  NG  NX   P   Q   R   S  SH   T  TH   V   W  WH   Y   Z  ZH
-B    0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-CH 100   0 100 100 100 100 100 100 100 100 100   3   3 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-D  100 100   0   1   2 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   3   3 100 100 100 100 100 100
-DH 100 100   1   0   1 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   3   3 100 100 100 100 100 100
-DX 100 100   2   1   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   3   3 100 100 100 100 100 100
-EL 100 100 100 100 100   0 100 100 100 100 100 100 100   1 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-EM 100 100 100 100 100 100   0 100 100 100 100 100 100 100   1 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-EN 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100   1   2   3 100 100 100 100 100 100 100 100 100 100 100 100 100
-F  100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-G  100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-HH 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-JH 100   3 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-K  100   3 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-L  100 100 100 100 100   1 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-M  100 100 100 100 100 100   1 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-N  100 100 100 100 100 100 100   1 100 100 100 100 100 100 100   0   1   2 100 100 100 100 100 100 100 100 100 100 100 100 100
-NG 100 100 100 100 100 100 100   2 100 100 100 100 100 100 100   1   0   1 100 100 100 100 100 100 100 100 100 100 100 100 100
-NX 100 100 100 100 100 100 100   3 100 100 100 100 100 100 100   2   1   0 100 100 100 100 100 100 100 100 100 100 100 100 100
-P  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100
-Q  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100
-R  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100
-S  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100
-SH 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100   2   1
-T  100 100   3   3   3 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0   1 100 100 100 100 100 100
-TH 100 100   3   3   3 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   1   0 100 100 100 100 100 100
-V  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100
-W  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0   1 100 100 100
-WH 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   1   0 100 100 100
-Y  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100
-Z  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   2 100 100 100 100 100 100   0   1
-ZH 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   1 100 100 100 100 100 100   1   0
+B    0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+CH inf   0 inf inf inf inf inf inf inf inf inf   3   3 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+D  inf inf   0   1   2 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   3   3 inf inf inf inf inf inf
+DH inf inf   1   0   1 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   3   3 inf inf inf inf inf inf
+DX inf inf   2   1   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   3   3 inf inf inf inf inf inf
+EL inf inf inf inf inf   0 inf inf inf inf inf inf inf   1 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+EM inf inf inf inf inf inf   0 inf inf inf inf inf inf inf   1 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+EN inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf   1   2   3 inf inf inf inf inf inf inf inf inf inf inf inf inf
+F  inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+G  inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+HH inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+JH inf   3 inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+K  inf   3 inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+L  inf inf inf inf inf   1 inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+M  inf inf inf inf inf inf   1 inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+N  inf inf inf inf inf inf inf   1 inf inf inf inf inf inf inf   0   1   2 inf inf inf inf inf inf inf inf inf inf inf inf inf
+NG inf inf inf inf inf inf inf   2 inf inf inf inf inf inf inf   1   0   1 inf inf inf inf inf inf inf inf inf inf inf inf inf
+NX inf inf inf inf inf inf inf   3 inf inf inf inf inf inf inf   2   1   0 inf inf inf inf inf inf inf inf inf inf inf inf inf
+P  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf
+Q  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf
+R  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf
+S  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf
+SH inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf   2   1
+T  inf inf   3   3   3 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0   1 inf inf inf inf inf inf
+TH inf inf   3   3   3 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   1   0 inf inf inf inf inf inf
+V  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf
+W  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0   1 inf inf inf
+WH inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   1   0 inf inf inf
+Y  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf
+Z  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   2 inf inf inf inf inf inf   0   1
+ZH inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   1 inf inf inf inf inf inf   1   0
 
 -}
 
@@ -132,58 +137,58 @@ toArpabet "Z" = Z
 toArpabet "ZH" = ZH
 toArpabet _ = error "not an ARPABET"
 
-distMatrix :: Array (ARPABET, ARPABET) Int
+distMatrix :: Array (ARPABET, ARPABET) Float
 distMatrix = array ((AA,AA),(ZH,ZH)) (zip ix val)
     where
         ix = [ (i, j) | i <- [AA .. ZH], j <- [AA .. ZH]]
         --        AA   AE   AH   AO   AW   AX  AXR   AY   EH   ER   EY   IH   IX   IY   OW   OY   UH   UW   UX    B   CH    D   DH   DX   EL   EM   EN    F    G   HH   JH    K    L    M    N   NG   NX    P    Q    R    S   SH    T   TH    V    W   WH    Y    Z   ZH
-        val   = [  0,   3,   1,   1,   3,   1,   1,   5,   3,   2,   3,   4,   4,   4,   4,   6,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   3,   0,   3,   3,   3,   3,   3,   4,   1,   3,   2,   3,   3,   3,   3,   5,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   1,   3,   0,   1,   2,   1,   1,   5,   3,   2,   3,   4,   4,   4,   3,   5,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   1,   3,   1,   0,   3,   1,   1,   5,   3,   2,   3,   4,   4,   4,   4,   6,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   3,   3,   2,   3,   0,   3,   3,   5,   3,   4,   3,   3,   3,   3,   1,   3,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   1,   3,   1,   1,   3,   0,   1,   5,   3,   2,   3,   4,   4,   4,   4,   6,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   1,   3,   1,   1,   3,   1,   0,   5,   3,   1,   3,   3,   3,   3,   4,   6,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   5,   4,   5,   5,   5,   5,   5,   0,   3,   5,   2,   5,   5,   5,   5,   7,   6,   6,   6, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   3,   1,   3,   3,   3,   3,   3,   3,   0,   3,   1,   3,   3,   3,   3,   5,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   2,   3,   2,   2,   4,   2,   1,   5,   3,   0,   3,   3,   3,   3,   5,   7,   4,   4,   4, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   3,   2,   3,   3,   3,   3,   3,   2,   1,   3,   0,   3,   3,   3,   3,   5,   4,   4,   4, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   4,   3,   4,   4,   3,   4,   3,   5,   3,   3,   3,   0,   1,   1,   3,   5,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   4,   3,   4,   4,   3,   4,   3,   5,   3,   3,   3,   1,   0,   1,   3,   5,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   4,   3,   4,   4,   3,   4,   3,   5,   3,   3,   3,   1,   1,   0,   3,   5,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   4,   3,   3,   4,   1,   4,   4,   5,   3,   5,   3,   3,   3,   3,   0,   2,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   6,   5,   5,   6,   3,   6,   6,   7,   5,   7,   5,   5,   5,   5,   2,   0,   5,   5,   5, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   3,   3,   3,   3,   3,   3,   3,   6,   3,   4,   4,   3,   3,   3,   3,   5,   0,   1,   1, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   3,   3,   3,   3,   3,   3,   3,   6,   3,   4,   4,   3,   3,   3,   3,   5,   1,   0,   1, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                   3,   3,   3,   3,   3,   3,   3,   6,   3,   4,   4,   3,   3,   3,   3,   5,   1,   1,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0,   1,   2, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   3,   3, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   1,   0,   1, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   3,   3, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   2,   1,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   3,   3, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100,   1, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100,   1, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100,   1,   2,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   1, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   1, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   1, 100, 100, 100, 100, 100, 100, 100,   0,   1,   2, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   2, 100, 100, 100, 100, 100, 100, 100,   1,   0,   1, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   3, 100, 100, 100, 100, 100, 100, 100,   2,   1,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100, 100,   2,   1,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0,   1, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   3,   3,   3, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   1,   0, 100, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0,   1, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   1,   0, 100, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   0, 100, 100,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   2, 100, 100, 100, 100, 100, 100,   0,   1,
-                 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,   1, 100, 100, 100, 100, 100, 100,   1,   0]
+        val   = [  0,   3,   1,   1,   3,   1,   1,   5,   3,   2,   3,   4,   4,   4,   4,   6,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   0,   3,   3,   3,   3,   3,   4,   1,   3,   2,   3,   3,   3,   3,   5,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   0,   1,   2,   1,   1,   5,   3,   2,   3,   4,   4,   4,   3,   5,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   1,   0,   3,   1,   1,   5,   3,   2,   3,   4,   4,   4,   4,   6,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   3,   2,   3,   0,   3,   3,   5,   3,   4,   3,   3,   3,   3,   1,   3,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   1,   1,   3,   0,   1,   5,   3,   2,   3,   4,   4,   4,   4,   6,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   1,   1,   3,   1,   0,   5,   3,   1,   3,   3,   3,   3,   4,   6,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   5,   4,   5,   5,   5,   5,   5,   0,   3,   5,   2,   5,   5,   5,   5,   7,   6,   6,   6, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   1,   3,   3,   3,   3,   3,   3,   0,   3,   1,   3,   3,   3,   3,   5,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   2,   3,   2,   2,   4,   2,   1,   5,   3,   0,   3,   3,   3,   3,   5,   7,   4,   4,   4, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   2,   3,   3,   3,   3,   3,   2,   1,   3,   0,   3,   3,   3,   3,   5,   4,   4,   4, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   4,   3,   4,   4,   3,   4,   3,   5,   3,   3,   3,   0,   1,   1,   3,   5,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   4,   3,   4,   4,   3,   4,   3,   5,   3,   3,   3,   1,   0,   1,   3,   5,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   4,   3,   4,   4,   3,   4,   3,   5,   3,   3,   3,   1,   1,   0,   3,   5,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   4,   3,   3,   4,   1,   4,   4,   5,   3,   5,   3,   3,   3,   3,   0,   2,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   6,   5,   5,   6,   3,   6,   6,   7,   5,   7,   5,   5,   5,   5,   2,   0,   5,   5,   5, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   3,   3,   3,   3,   3,   3,   6,   3,   4,   4,   3,   3,   3,   3,   5,   0,   1,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   3,   3,   3,   3,   3,   3,   6,   3,   4,   4,   3,   3,   3,   3,   5,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   3,   3,   3,   3,   3,   3,   6,   3,   4,   4,   3,   3,   3,   3,   5,   1,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf,   1,   2,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf,   0,   1,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2, inf, inf, inf, inf, inf, inf, inf,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf,   2,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf,   2,   1,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2, inf, inf, inf, inf, inf, inf,   0,   1,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf,   1,   0]

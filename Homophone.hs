@@ -28,24 +28,36 @@ isPureHomophone x y acc = matchAny (combine phonX) (combine phonY)
 -- Takes two words and compares their phonetic spellings and outputs True
 -- if their fuzzy score is below a certain threshold
 isHomophone :: [String] -> [String] -> Accent -> Bool
-isHomophone x y acc = fuzzyScore combX combY < 100
+isHomophone x y acc = fuzzyScore combX combY < 10
     where
         combX = convertToAccent acc (combine phonX)
         combY = convertToAccent acc (combine phonY)
         phonX = map (maybe [] (map (map toArpabet)) . lookupArpabet) x
         phonY = map (maybe [] (map (map toArpabet)) . lookupArpabet) y
         
-        fuzzyScore :: [Pronunciation] -> [Pronunciation] -> Int
-        fuzzyScore x y = minimum $ map (\z -> minimum $ map (fuzzy z) y) x
+-- Uses fuzzy scoring system to determine most similar pronunciation between
+-- 2 list of words. Each scoring is divided by the length of pronounciation to normalise
+-- the score (unless score >= inf where it is obviously not a homophone and thus
+-- ignored).
+fuzzyScore :: [Pronunciation] -> [Pronunciation] -> Float
+fuzzyScore x y = minimum $ map (minimum . fuzzyScore' y) x
+
+fuzzyScore' :: [Pronunciation] -> Pronunciation -> [Float]
+fuzzyScore' [] _ = [] 
+fuzzyScore' (x : xs) y
+    | score >= inf = score : fuzzyScore' xs y
+    | otherwise    = score / fromIntegral (length y) : fuzzyScore' xs y
+    where
+        score = fuzzy x y
 
 -- the lower the score, the more similar the words are. (0 score = pure homophone)
 -- assumptions:
 --      * length of both words should be similar to be considered fuzzy
---      * 100 is arbitrary high number to depict infinity score
-fuzzy :: [ARPABET] -> [ARPABET] -> Int
+--      * inf is arbitrary high number to depict infinity score
+fuzzy :: Pronunciation -> Pronunciation -> Float
 fuzzy [] [] = 0
-fuzzy [] _ = 100
-fuzzy _ [] = 100
+fuzzy [] _ = inf
+fuzzy _ [] = inf
 fuzzy (x:xs) (y:ys) = distMatrix ! (x, y) + fuzzy xs ys
 
 -- provides a list of all combination of pronunciations that can exist for a list of words

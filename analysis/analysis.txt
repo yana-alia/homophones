@@ -32,6 +32,11 @@ TODO:
 - multiple words support for homophones rev dict function
 - spoonerisms, rhyming, etc.
 - Matches words not in dictionary? Or partially not in dictionary (past tense, letter pronunciations)
+- stats for homophones (proportion of homophone)
+- east london (TH -> F)
+- Construct diff ways of pronouncing words (dialect and stuff)
+- "EYOT"/"AIT" similar spelling to "buoy"
+- generate fuzzy hom change 2 letters then backtrack
 
 former spoken on the radio
  |      |
