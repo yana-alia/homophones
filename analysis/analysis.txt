@@ -75,3 +75,46 @@ mention in report that:
 we can construct specific tables for specific accents.
 we take a semantic approach compared to using Neural Network (dtaa already available)
 "conger" and "conga" should not be a homophone despite being in homophoneTable (same with "pascal" n "paschal")
+
+GENERATING HOMOPHONES!
+
+THRESHOLD: 2
+ghci> debugFuzzyHomophones "book"
+[(0.0,"BOOK"),(1.0,"BOOCK")]
+
+ghci> debugFuzzyHomophones "money"
+[(1.0,"MANI"),(1.0,"MOHNEY"),(0.0,"MONEY"),(0.0,"MUNNI"),(1.0,"MAUNEY")]
+
+ghci> debugFuzzyHomophones "racket"
+[(0.0,"RACKET"),(0.0,"RACQUET"),(1.0,"RECKITT")]
+
+ghci> debugFuzzyHomophones "seven"
+[(0.0,"SEVEN"),(2.0,"SEVERN"),(2.0,"SAVON")]
+
+THRESHOLD: 3
+ghci> debugFuzzyHomophones "book"
+[(3.0,"BAACK"),(3.0,"BACH"),(3.0,"BOCH"),(3.0,"BOCK"),(3.0,"BOHLKE"),(3.0,"BOK"),(3.0,"BACK"),(3.0,"BACKE"),
+(3.0,"BAK"),(3.0,"BAKKE"),(3.0,"BUC"),(3.0,"BUCK"),(3.0,"BALK"),(3.0,"BAEK"),(3.0,"BEC"),(3.0,"BECK"),(3.0,"BIC"),
+(3.0,"BICK"),(3.0,"BAEK"),(3.0,"BEAK"),(3.0,"BEECK"),(3.0,"BEEK"),(3.0,"BOAK"),(3.0,"BOAKE"),(3.0,"BOECK"),(3.0,"BOEKE"),
+(3.0,"BOUCK"),(3.0,"BUTCH"),(0.0,"BOOK"),(1.0,"BOOCK")]
+
+ghci> debugFuzzyHomophones "money"
+[(1.0,"MANI"),(1.0,"MOHNEY"),(3.0,"MANNEY"),(3.0,"MANNI"),(3.0,"MANNIE"),(3.0,"MANNY"),(0.0,"MONEY"),(0.0,"MUNNI"),
+(1.0,"MAUNEY"),(3.0,"MANY"),(3.0,"MANEY"),(3.0,"MONY"),(3.0,"MOONEY"),(3.0,"MOONIE")]
+
+ghci> debugFuzzyHomophones "racket"
+[(3.0,"ROCKETT"),(0.0,"RACKET"),(0.0,"RACQUET"),(1.0,"RECKITT"),(3.0,"RICKETT")]
+
+THRESHOLD: 5
+ghci> debugFuzzyHomophones "book"
+[(3.0,"BAACK"),(3.0,"BACH"),(3.0,"BOCH"),(3.0,"BOCK"),(3.0,"BOHLKE"),(3.0,"BOK"),(3.0,"BACK"),(3.0,"BACKE"),
+(3.0,"BAK"),(3.0,"BAKKE"),(3.0,"BUC"),(3.0,"BUCK"),(3.0,"BALK"),(3.0,"BAEK"),(3.0,"BEC"),(3.0,"BECK"),(4.0,"BERCH"),
+(4.0,"BERK"),(4.0,"BERKE"),(4.0,"BIRK"),(4.0,"BOURKE"),(4.0,"BURCK"),(4.0,"BURK"),(4.0,"BURKE"),(4.0,"BAKE"),
+(3.0,"BIC"),(3.0,"BICK"),(3.0,"BAEK"),(3.0,"BEAK"),(3.0,"BEECK"),(3.0,"BEEK"),(3.0,"BOAK"),(3.0,"BOAKE"),(3.0,"BOECK"),
+(3.0,"BOEKE"),(3.0,"BOUCK"),(5.0,"BOIK"),(5.0,"BOIKE"),(3.0,"BUTCH"),(0.0,"BOOK"),(4.0,"BUECHE"),(1.0,"BOOCK")]
+
+ghci> debugFuzzyHomophones "synch"
+[(0.0,"CINCH"),(0.0,"SYNCH"),(3.0,"SINGE"),(4.0,"CINQ"),(4.0,"CINQUE"),(4.0,"SINK"),(4.0,"SYNC")]
+
+ghci> debugFuzzyHomophones "dramatic"
+[(0.0,"DRAMATIC"),(4.0,"TRAUMATIC")]

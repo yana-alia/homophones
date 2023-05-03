@@ -9,10 +9,6 @@ data ARPABET = AA | AE | AH | AO | AW | AX | AXR | AY | EH | ER | EY | -- VOWELS
                K | L | M | N | NG | NX | P | Q | R | S | SH | T | TH | -- CONSONENTS
                V | W | WH | Y | Z | ZH                                 -- CONSONENTS
             deriving (Show, Enum, Ord, Eq, Read, Ix)
-            
--- Constant to define infinity score
-inf :: Float
-inf = 100
 
 {-
 
@@ -83,59 +79,10 @@ isVowel arp = arp >= AA && arp <= UX
 
 isConsonent :: ARPABET -> Bool
 isConsonent = not . isVowel
-
-toArpabet :: String -> ARPABET
-toArpabet "AA" = AA
-toArpabet "AE" = AE
-toArpabet "AH" = AH
-toArpabet "AO" = AO
-toArpabet "AW" = AW
-toArpabet "AX" = AX
-toArpabet "AXR" = AXR
-toArpabet "AY" = AY
-toArpabet "EH" = EH
-toArpabet "ER" = ER
-toArpabet "EY" = EY
-toArpabet "IH" = IH
-toArpabet "IX" = IX
-toArpabet "IY" = IY
-toArpabet "OW" = OW
-toArpabet "OY" = OY
-toArpabet "UH" = UH
-toArpabet "UW" = UW
-toArpabet "UX" = UX
-toArpabet "B" = B
-toArpabet "CH" = CH
-toArpabet "D" = D
-toArpabet "DH" = DH
-toArpabet "DX" = DX
-toArpabet "EL" = EL
-toArpabet "EM" = EM
-toArpabet "EN" = EN
-toArpabet "F" = F
-toArpabet "G" = G
-toArpabet "HH" = HH
-toArpabet "JH" = JH
-toArpabet "K" = K
-toArpabet "L" = L
-toArpabet "M" = M
-toArpabet "N" = N
-toArpabet "NG" = NG
-toArpabet "NX" = NX
-toArpabet "P" = P
-toArpabet "Q" = Q
-toArpabet "R" = R
-toArpabet "S" = S
-toArpabet "SH" = SH
-toArpabet "T" = T
-toArpabet "TH" = TH
-toArpabet "V" = V
-toArpabet "W" = W
-toArpabet "WH" = WH
-toArpabet "Y" = Y
-toArpabet "Z" = Z
-toArpabet "ZH" = ZH
-toArpabet _ = error "not an ARPABET"
+   
+-- Constant to define infinity score
+inf :: Float
+inf = 100
 
 distMatrix :: Array (ARPABET, ARPABET) Float
 distMatrix = array ((AA,AA),(ZH,ZH)) (zip ix val)
@@ -192,3 +139,108 @@ distMatrix = array ((AA,AA),(ZH,ZH)) (zip ix val)
                  inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf,
                  inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2, inf, inf, inf, inf, inf, inf,   0,   1,
                  inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf,   1,   0]
+
+toArpabet :: String -> ARPABET
+toArpabet "AA" = AA
+toArpabet "AE" = AE
+toArpabet "AH" = AH
+toArpabet "AO" = AO
+toArpabet "AW" = AW
+toArpabet "AX" = AX
+toArpabet "AXR" = AXR
+toArpabet "AY" = AY
+toArpabet "EH" = EH
+toArpabet "ER" = ER
+toArpabet "EY" = EY
+toArpabet "IH" = IH
+toArpabet "IX" = IX
+toArpabet "IY" = IY
+toArpabet "OW" = OW
+toArpabet "OY" = OY
+toArpabet "UH" = UH
+toArpabet "UW" = UW
+toArpabet "UX" = UX
+toArpabet "B" = B
+toArpabet "CH" = CH
+toArpabet "D" = D
+toArpabet "DH" = DH
+toArpabet "DX" = DX
+toArpabet "EL" = EL
+toArpabet "EM" = EM
+toArpabet "EN" = EN
+toArpabet "F" = F
+toArpabet "G" = G
+toArpabet "HH" = HH
+toArpabet "JH" = JH
+toArpabet "K" = K
+toArpabet "L" = L
+toArpabet "M" = M
+toArpabet "N" = N
+toArpabet "NG" = NG
+toArpabet "NX" = NX
+toArpabet "P" = P
+toArpabet "Q" = Q
+toArpabet "R" = R
+toArpabet "S" = S
+toArpabet "SH" = SH
+toArpabet "T" = T
+toArpabet "TH" = TH
+toArpabet "V" = V
+toArpabet "W" = W
+toArpabet "WH" = WH
+toArpabet "Y" = Y
+toArpabet "Z" = Z
+toArpabet "ZH" = ZH
+toArpabet x = error (show x ++ " not an ARPABET")
+
+fromArpabet :: ARPABET -> String
+fromArpabet AA = "AA"
+fromArpabet AE = "AE"
+fromArpabet AH = "AH"
+fromArpabet AO = "AO"
+fromArpabet AW = "AW"
+fromArpabet AX = "AX"
+fromArpabet AXR = "AXR"
+fromArpabet AY = "AY"
+fromArpabet EH = "EH"
+fromArpabet ER = "ER"
+fromArpabet EY = "EY"
+fromArpabet IH = "IH"
+fromArpabet IX = "IX"
+fromArpabet IY = "IY"
+fromArpabet OW = "OW"
+fromArpabet OY = "OY"
+fromArpabet UH = "UH"
+fromArpabet UW = "UW"
+fromArpabet UX = "UX"
+fromArpabet B = "B"
+fromArpabet CH = "CH"
+fromArpabet D = "D"
+fromArpabet DH = "DH"
+fromArpabet DX = "DX"
+fromArpabet EL = "EL"
+fromArpabet EM = "EM"
+fromArpabet EN = "EN"
+fromArpabet F = "F"
+fromArpabet G = "G"
+fromArpabet HH = "HH"
+fromArpabet JH = "JH"
+fromArpabet K = "K"
+fromArpabet L = "L"
+fromArpabet M = "M"
+fromArpabet N = "N"
+fromArpabet NG = "NG"
+fromArpabet NX = "NX"
+fromArpabet P = "P"
+fromArpabet Q = "Q"
+fromArpabet R = "R"
+fromArpabet S = "S"
+fromArpabet SH = "SH"
+fromArpabet T = "T"
+fromArpabet TH = "TH"
+fromArpabet V = "V"
+fromArpabet W = "W"
+fromArpabet WH = "WH"
+fromArpabet Y = "Y"
+fromArpabet Z = "Z"
+fromArpabet ZH = "ZH"

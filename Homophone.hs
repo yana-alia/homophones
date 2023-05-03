@@ -1,7 +1,5 @@
 module Homophone where
 
-import Debug.Trace
-import Control.Monad
 import qualified Data.Map as Map
 import Data.List
 import Data.IntMap (fromList)
@@ -11,6 +9,7 @@ import Data.Maybe
 import Data.Array
 
 import Arpabet
+import GHC.Num
 
 data Accent = British | Cockney | None | All
             deriving (Eq, Show, Read)
@@ -122,6 +121,14 @@ homophones s = map head (group $ sort words)
         words = concatMap (fromMaybe [] . lookupWords) arp
         arp = fromMaybe [] (lookupArpabet s)
 
+-- generates words that have similar phonetic spelling as the given word.
+fuzzyHomophones :: String -> [String]
+fuzzyHomophones s = map head (group $ sort words)
+    where
+        words = concatMap (fromMaybe [] . lookupWords . map fromArpabet) fuzzArp
+        fuzzArp = concatMap (fuzzyArpabet . map toArpabet) arp
+        arp = fromMaybe [] (lookupArpabet s)
+
 -- look up words that corresponds to the given ARPABET spelling if exists in dictionary
 lookupWords :: [String] -> Maybe [String]
 lookupWords s = Map.lookup s revDictMap
@@ -142,7 +149,7 @@ readRevDict = read
 -- Only allow changes up to a certain scoring threshold
 -- e.g. [R,AE,D] -> [[R,EH,D],[R,AE,DH],[R,EH,T],[R,UH,D],...]
 threshold :: Float
-threshold = 3
+threshold = 5
 
 fuzzyArpabet :: Pronunciation -> [Pronunciation]
 fuzzyArpabet = fuzzyArpabet' 0
@@ -153,3 +160,28 @@ fuzzyArpabet' :: Float -> Pronunciation -> [Pronunciation]
 fuzzyArpabet' _ [] = [[]]
 fuzzyArpabet' n (x : xs)
     = [ m | arp <- [AA .. ZH], n + distMatrix ! (x, arp) <= threshold, m <- map (arp :) (fuzzyArpabet' (n + distMatrix ! (x, arp)) xs) ]
+
+-- =========================================== DEBUG MODE =========================================== --
+
+-- generates words that have similar phonetic spelling as the given word.
+debugFuzzyHomophones :: String -> [(Float, String)]
+debugFuzzyHomophones s = debugFuzzyHomophones' fuzzArp
+    where
+        fuzzArp = concatMap (debugFuzzyArpabet 0 . map toArpabet) arp
+        arp = fromMaybe [] (lookupArpabet s)
+
+debugFuzzyHomophones' :: [(Float, Pronunciation)] -> [(Float, String)]
+debugFuzzyHomophones' [] = []
+debugFuzzyHomophones' ((n, s) : ls) = zip n' s' ++ debugFuzzyHomophones' ls
+    where
+        n' = [n' | x <- [1 .. length s'], n' <- [n]]
+        s' = fromMaybe [] . lookupWords $ map fromArpabet s
+
+-- "map (arp :)" will cons arp onto every inner list and therefore needs a inner list to
+-- map over, hence "[[]]" as the base case.
+debugFuzzyArpabet :: Float -> Pronunciation -> [(Float, Pronunciation)]
+debugFuzzyArpabet n [] = [(n, [])]
+debugFuzzyArpabet n (x : xs)
+    = nub [ (n', arp : m) | arp <- [AA .. ZH]
+    , n + distMatrix ! (x, arp) <= threshold
+    , (n', m) <- debugFuzzyArpabet (n + distMatrix ! (x, arp)) xs ]
