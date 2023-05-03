@@ -82,7 +82,7 @@ isConsonent = not . isVowel
    
 -- Constant to define infinity score
 inf :: Float
-inf = 100
+inf = 1000
 
 distMatrix :: Array (ARPABET, ARPABET) Float
 distMatrix = array ((AA,AA),(ZH,ZH)) (zip ix val)
