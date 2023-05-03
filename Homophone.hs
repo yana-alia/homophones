@@ -138,9 +138,8 @@ revDictMap = Map.fromList file
 readRevDict :: String -> ([String], [String])
 readRevDict = read
 
--- TODO!!!!
 -- Generate multiple Arpabet spellings that sound similar to given Pronunciation.
--- Only allowed to make 2 changes to avoid increasing complexity
+-- Only allow changes up to a certain scoring threshold
 -- e.g. [R,AE,D] -> [[R,EH,D],[R,AE,DH],[R,EH,T],[R,UH,D],...]
 threshold :: Float
 threshold = 3
