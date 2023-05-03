@@ -114,6 +114,8 @@ convertToBritish (x : xs) = x : convertToBritish xs
 
 -- =========================================== REVERSE DICT =========================================== --
 
+-- generates words that have the exact same phonetic spelling as the given word.
+-- e.g. "READ" -> ["READ","READE","RED","REDD","REED","REID","RIED","RIEDE","WREDE"]
 homophones :: String -> [String]
 homophones s = map head (group $ sort words)
     where
@@ -140,9 +142,15 @@ readRevDict = read
 -- Generate multiple Arpabet spellings that sound similar to given Pronunciation.
 -- Only allowed to make 2 changes to avoid increasing complexity
 -- e.g. [R,AE,D] -> [[R,EH,D],[R,AE,DH],[R,EH,T],[R,UH,D],...]
+threshold :: Float
+threshold = 3
+
 fuzzyArpabet :: Pronunciation -> [Pronunciation]
 fuzzyArpabet = fuzzyArpabet' 0
 
-fuzzyArpabet' :: Int -> Pronunciation -> [Pronunciation]
-fuzzyArpabet' 2 _ = []
-fuzzyArpabet' n (x : xs) = undefined
+-- "map (arp :)" will cons arp onto every inner list and therefore needs a inner list to
+-- map over, hence "[[]]" as the base case.
+fuzzyArpabet' :: Float -> Pronunciation -> [Pronunciation]
+fuzzyArpabet' _ [] = [[]]
+fuzzyArpabet' n (x : xs)
+    = [ m | arp <- [AA .. ZH], n + distMatrix ! (x, arp) <= threshold, m <- map (arp :) (fuzzyArpabet' (n + distMatrix ! (x, arp)) xs) ]
