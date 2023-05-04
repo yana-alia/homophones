@@ -595,15 +595,43 @@ homTableNotInDict
     , (["were"], ["whirr"], All) ==> True
     , (["wheald"], ["wheeled"], All) ==> True -- wheald is not in the dictionary
     ]
-  
-homophone
-  = [ (["deign"], ["dane"], All) ==> True
+
+falsePositives
+  = [ (["rockett"], ["racket"], All) ==> False
+    , (["bach"], ["book"], All) ==> False
+    , (["beak"], ["buck"], All) ==> False
+    , (["build"], ["bowled"], All) ==> False
+    , (["throb"], ["train"], All) ==> False
+    , (["throng"], ["train"], All) ==> False
+    , (["purse"], ["piece"], All) ==> False
+    , (["right"], ["wrought"], All) ==> False
+    , (["write"], ["route"], All) ==> False
     ] 
+
 multWords
   = [ (["in","close"], ["enclose"], All) ==> True
     , (["add","hock"], ["ad-hoc"], All) ==> True
     , (["high","jack"], ["hijack"], All) ==> True
+    , (["mei","bee"], ["maybe"], All) ==> True
+    , (["cray","z"], ["crazy"], All) ==> True
+    , (["mech","op"], ["makeup"], All) ==> True
+    , (["boar","inn"], ["boring"], All) ==> True
+    , (["star","sheep"], ["starship"], All) ==> True
+    , (["cannes","vess"], ["canvas"], All) ==> True
+    , (["cree","maid"], ["cremate"], All) ==> True
+    , (["e","z"], ["easy"], All) ==> True
+    , (["s","x"], ["essex"], All) ==> True
+    , (["x","l"], ["excel"], All) ==> True
+    , (["k","n"], ["cayenne"], All) ==> True
+    , (["hoe","leigh"], ["holy"], All) ==> True
+    , (["marque","at"], ["market"], All) ==> True
+    , (["tea","meade"], ["timid"], All) ==> True
+    , (["x","s"], ["excess"], All) ==> True
+    , (["m","t"], ["empty"], All) ==> True
+    , (["n","t"], ["anti"], All) ==> True
+    , (["i","v"], ["ivy"], All) ==> True
     , (["past","oral"], ["pastoral"], All) ==> True -- Fuzzy homophone. Remove "R"
+    , (["x","l","anse"], ["excellence"], All) ==> True
     ]
 
 {-# NOINLINE megaTest #-}
@@ -618,6 +646,7 @@ megaTest = map readMegaTest $ lines getFile
 
 allTestCases
       = [ TestCase "Morse homophoneTable" (uncurry3 isHomophone) homophonesTable
+        , TestCase "Non-Homophones" (uncurry3 isHomophone) falsePositives
         , TestCase "Pure homophones" (uncurry3 isHomophone) megaTest
         , TestCase "Multi-word homophones" (uncurry3 isHomophone) multWords ]
 

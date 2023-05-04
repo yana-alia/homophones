@@ -27,7 +27,7 @@ isPureHomophone x y acc = matchAny (combine phonX) (combine phonY)
 -- Takes two words and compares their phonetic spellings and outputs True
 -- if their fuzzy score is below a certain threshold
 isHomophone :: [String] -> [String] -> Accent -> Bool
-isHomophone x y acc = fuzzyScore combX combY < 10
+isHomophone x y acc = fuzzyScore combX combY < 1.5
     where
         combX = convertToAccent acc (combine phonX)
         combY = convertToAccent acc (combine phonY)
@@ -38,6 +38,7 @@ isHomophone x y acc = fuzzyScore combX combY < 10
 -- 2 list of words. Each scoring is divided by the length of pronunciation to normalise
 -- the score (unless score >= inf where it is obviously not a homophone and thus
 -- ignored).
+-- TODO: fix empty list minimum exception
 fuzzyScore :: [Pronunciation] -> [Pronunciation] -> Float
 fuzzyScore x y = minimum $ map (minimum . fuzzyScore' y) x
 
@@ -149,7 +150,7 @@ readRevDict = read
 -- Only allow changes up to a certain scoring threshold
 -- e.g. [R,AE,D] -> [[R,EH,D],[R,AE,DH],[R,EH,T],[R,UH,D],...]
 threshold :: Float
-threshold = 5
+threshold = 3
 
 fuzzyArpabet :: Pronunciation -> [Pronunciation]
 fuzzyArpabet = fuzzyArpabet' 0
@@ -167,7 +168,7 @@ fuzzyArpabet' n (x : xs)
 
 -- generates words that have similar phonetic spelling as the given word.
 debugFuzzyHomophones :: String -> [(Float, String)]
-debugFuzzyHomophones s = debugFuzzyHomophones' fuzzArp
+debugFuzzyHomophones s = sort $ debugFuzzyHomophones' fuzzArp
     where
         fuzzArp = concatMap (debugFuzzyArpabet 0 . map toArpabet) arp
         arp = fromMaybe [] (lookupArpabet s)
