@@ -16,15 +16,15 @@ data Accent = British | None | All
 
 type Pronunciation = [ARPABET]
 
--- Takes two words and compares their phonetic spellings and outputs True
+-- Takes two list of words and compares their phonetic spellings and outputs True
 -- if they are pure homophones of each other and false otherwise
-isPureHomophone :: [String] -> [String] -> Accent -> Bool
-isPureHomophone x y acc = matchAny (combine phonX) (combine phonY)
+isPureHomophone :: [String] -> [String] -> Bool
+isPureHomophone x y = matchAny (combine phonX) (combine phonY)
     where
         phonX = map (maybe [] (map (map toArpabet)) . lookupArpabet) x
         phonY = map (maybe [] (map (map toArpabet)) . lookupArpabet) y
 
--- Takes two words and compares their phonetic spellings and outputs True
+-- Takes two list of words and compares their phonetic spellings and outputs True
 -- if their fuzzy score is below a certain threshold
 isHomophone :: [String] -> [String] -> Accent -> Bool
 isHomophone x y acc = fuzzyScore combX combY < 1.5
@@ -90,8 +90,8 @@ dictMap = Map.fromList file
         getFile = unsafePerformIO $ do
             readFile "data/ArpabetDictStr.txt"
 
--- e.g "("A",[AH,EY])" -> ("A",[AH,EY]) with correct type specified assuming
--- formatting of elements in the String matches specified type
+-- e.g "("A",["AH","EY"])" -> ("A",["AH","EY"]) with correct type specified
+-- assuming formatting of elements in the String matches specified type
 readDict :: String -> (String, [[String]])
 readDict = read
 
