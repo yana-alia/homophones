@@ -27,7 +27,6 @@ convertToBRitish = Omits R sounds at the end of syllables. Also edited R to ER s
 
 TODO:
 - Add false positives in tests to finetune fuzzy search
-- Remove Rs for British accent
 - add more accent features
 - multiple words support for homophones rev dict function
 - spoonerisms, rhyming, etc.
@@ -36,7 +35,6 @@ TODO:
 - east london (TH -> F)
 - Construct diff ways of pronouncing words (dialect and stuff)
 - "EYOT"/"AIT" similar spelling to "buoy"
-- generate fuzzy hom change 2 letters then backtrack
 
 former spoken on the radio
  |      |

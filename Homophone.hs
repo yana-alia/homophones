@@ -21,16 +21,16 @@ type Pronunciation = [ARPABET]
 isPureHomophone :: [String] -> [String] -> Bool
 isPureHomophone x y = matchAny (combine phonX) (combine phonY)
     where
-        phonX = map (maybe [] (map (map toArpabet)) . lookupArpabet) x
-        phonY = map (maybe [] (map (map toArpabet)) . lookupArpabet) y
+        phonX = map (fromMaybe [] . lookupArpabet) x
+        phonY = map (fromMaybe [] . lookupArpabet) y
 
 -- Takes two list of words and compares their phonetic spellings and outputs True
 -- if their fuzzy score is below a certain threshold
 isHomophone :: [String] -> [String] -> Accent -> Bool
 isHomophone x y acc = fuzzyScore combX combY < 1.5
     where
-        combX = convertToAccent acc (combine phonX)
-        combY = convertToAccent acc (combine phonY)
+        combX = miscChange $ convertToAccent acc (combine phonX)
+        combY = miscChange $ convertToAccent acc (combine phonY)
         phonX = map (maybe [] (map (map toArpabet)) . lookupArpabet) x
         phonY = map (maybe [] (map (map toArpabet)) . lookupArpabet) y
         
@@ -41,6 +41,10 @@ isHomophone x y acc = fuzzyScore combX combY < 1.5
 -- TODO: fix empty list minimum exception
 fuzzyScore :: [Pronunciation] -> [Pronunciation] -> Float
 fuzzyScore x y = minimum $ map (minimum . fuzzyScore' y) x
+
+-- *non-normalised ver*
+-- fuzzyScore :: [Pronunciation] -> [Pronunciation] -> Float
+-- fuzzyScore x y = minimum $ map (\z -> minimum $ map (fuzzy z) y) x
 
 fuzzyScore' :: [Pronunciation] -> Pronunciation -> [Float]
 fuzzyScore' [] _ = [] 
@@ -56,19 +60,19 @@ fuzzyScore' (x : xs) y
 --      * inf is arbitrary high number to depict infinity score
 fuzzy :: Pronunciation -> Pronunciation -> Float
 fuzzy [] [] = 0
-fuzzy [] _ = inf
-fuzzy _ [] = inf
+fuzzy [] _  = inf
+fuzzy _ []  = inf
 fuzzy (x:xs) (y:ys) = distMatrix ! (x, y) + fuzzy xs ys
 
 -- provides a list of all combination of pronunciations that can exist for a list of words
 -- e.g. ["a","why"] which has pronunciations: [[[AH],[EY]],[[W,AY],[HH,W,AY]]]
 --      outputs [[AH,W,AY],[AH,HH,W,AY],[EY,W,AY],[EY,HH,W,AY]]
-combine :: [[Pronunciation]] -> [Pronunciation]
+combine :: [[[a]]] -> [[a]]
 combine []       = []
 combine [w]      = w
 combine (w : ws) = combine' w (combine ws)
     where
-        combine' :: [Pronunciation] -> [Pronunciation] -> [Pronunciation]
+        combine' :: [[a]] -> [[a]] -> [[a]]
         combine' x y = [xs ++ ys | xs <- x, ys <- y]
 
 
@@ -97,12 +101,12 @@ readDict = read
 
 -- ============================================= ACCENTS ============================================= --
 
-convertToAccent :: Accent -> [Pronunciation] -> [Pronunciation]
-convertToAccent None ls = ls
-convertToAccent British ls = map convertToBritish ls
-convertToAccent All ls = map head . group . sort $ map convertToBritish ls ++ ls
-
 -- (map head . group . sort) is O(N log N) compared to O(N^2) of nub
+convertToAccent :: Accent -> [Pronunciation] -> [Pronunciation]
+convertToAccent None ls    = ls
+convertToAccent British ls = map convertToBritish ls
+convertToAccent All ls     = map head . group . sort $ map convertToBritish ls ++ ls
+
 convertToBritish :: [ARPABET] -> [ARPABET]
 convertToBritish []  = []
 convertToBritish [x] = [x | x /= R]
@@ -111,7 +115,38 @@ convertToBritish (R : xs)
     | otherwise = R : convertToBritish xs
 convertToBritish (x : xs) = x : convertToBritish xs
 
+-- =============================================== MISC =============================================== --
 
+miscChange :: [Pronunciation] -> [Pronunciation]
+miscChange [] = []
+miscChange (x : xs)
+    | AY `elem` x = x : changeAYAH x : miscChange xs
+    | otherwise   = x : miscChange xs
+
+-- changing AY -> AY,AH is chosen over AY,AH -> AY to increase potential fuzzy homophones
+-- from multiple words.
+changeAYAH :: Pronunciation -> Pronunciation
+changeAYAH []        = []
+changeAYAH [AY]      = [AY]
+changeAYAH (AY : AH : xs) = AY : AH : changeAYAH xs
+changeAYAH (AY : xs) = AY : AH : changeAYAH xs
+changeAYAH (x : xs)  = x : changeAYAH xs
+
+
+-- similar to Elem but supports a consecutive list to compare.
+-- e.g. includes [1,2] [0,1,2,3] = True
+--      includes [1,2] [0,1,3,4] = False
+--      includes [1,2] [0,1,3,2] = False
+includes :: Eq a => [a] -> [a] -> Bool
+includes x y = includes' x y x
+    where
+        includes' :: Eq a => [a] -> [a] -> [a] -> Bool
+        includes' [] _ _ = True
+        includes' _ [] _ = False
+        includes' (x : xs) (y : ys) xx@(z : zs)
+            | x == y    = includes' xs ys xx
+            | otherwise = if y == z then includes' zs ys xx else includes' xx ys xx
+    
 -- =========================================== REVERSE DICT =========================================== --
 
 -- generates words that have the exact same phonetic spelling as the given word.
@@ -120,15 +155,15 @@ homophones :: String -> [String]
 homophones s = map head (group $ sort words)
     where
         words = concatMap (fromMaybe [] . lookupWords) arp
-        arp = fromMaybe [] (lookupArpabet s)
+        arp   = fromMaybe [] (lookupArpabet s)
 
 -- generates words that have similar phonetic spelling as the given word.
 fuzzyHomophones :: String -> [String]
 fuzzyHomophones s = map head (group $ sort words)
     where
-        words = concatMap (fromMaybe [] . lookupWords . map fromArpabet) fuzzArp
+        words   = concatMap (fromMaybe [] . lookupWords . map fromArpabet) fuzzArp
         fuzzArp = concatMap (fuzzyArpabet . map toArpabet) arp
-        arp = fromMaybe [] (lookupArpabet s)
+        arp     = fromMaybe [] (lookupArpabet s)
 
 -- look up words that corresponds to the given ARPABET spelling if exists in dictionary
 lookupWords :: [String] -> Maybe [String]
@@ -160,7 +195,8 @@ fuzzyArpabet = fuzzyArpabet' 0
 fuzzyArpabet' :: Float -> Pronunciation -> [Pronunciation]
 fuzzyArpabet' _ [] = [[]]
 fuzzyArpabet' n (x : xs)
-    = [ m | arp <- [AA .. ZH], n + distMatrix ! (x, arp) <= threshold, m <- map (arp :) (fuzzyArpabet' (n + distMatrix ! (x, arp)) xs) ]
+    = [ m | arp <- [AA .. ZH], n + distMatrix ! (x, arp) <= threshold,
+        m <- map (arp :) (fuzzyArpabet' (n + distMatrix ! (x, arp)) xs) ]
 
 -- =========================================== DEBUG MODE =========================================== --
 -- Debug mode shows the score of each words generated by debugFuzzyHomophones. The lower the score
@@ -171,7 +207,7 @@ debugFuzzyHomophones :: String -> [(Float, String)]
 debugFuzzyHomophones s = sort $ debugFuzzyHomophones' fuzzArp
     where
         fuzzArp = concatMap (debugFuzzyArpabet 0 . map toArpabet) arp
-        arp = fromMaybe [] (lookupArpabet s)
+        arp     = fromMaybe [] (lookupArpabet s)
 
 debugFuzzyHomophones' :: [(Float, Pronunciation)] -> [(Float, String)]
 debugFuzzyHomophones' [] = []
