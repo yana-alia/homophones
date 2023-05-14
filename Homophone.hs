@@ -38,9 +38,13 @@ isHomophone x y acc = fuzzyScore combX combY < 1.5
 -- 2 list of words. Each scoring is divided by the length of pronunciation to normalise
 -- the score (unless score >= inf where it is obviously not a homophone and thus
 -- ignored).
--- TODO: fix empty list minimum exception
 fuzzyScore :: [Pronunciation] -> [Pronunciation] -> Float
-fuzzyScore x y = minimum $ map (minimum . fuzzyScore' y) x
+fuzzyScore x y = minimum' $ map (minimum' . fuzzyScore' y) x
+    where
+        -- Similar to minimum but defaults to high score if list is empty
+        minimum' :: [Float] -> Float
+        minimum' [] = inf
+        minimum' x = minimum x
 
 -- *non-normalised ver*
 -- fuzzyScore :: [Pronunciation] -> [Pronunciation] -> Float
