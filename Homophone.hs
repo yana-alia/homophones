@@ -234,11 +234,15 @@ debugFuzzyArpabet n (x : xs)
     Spoonerism: 2 words in which initial letters or syllables get swapped and create new words
     e.g. Blushing Crow -> Crushing Blow
          Key Naps -> Kneecaps
+         Shoving Leopard -> Loving Shepard
+         Fighting Liar -> Lighting Fire
+         Dean Busy -> Bean Dizzy
 -}
 
 -- This function takes in a pair of words and outputs a list of pairs of words that are generated
 -- by spoonerism.
 -- e.g. spoonerism ("BLUSHING","CROW") = [("CRUSHING","BLEAU"),("CRUSHING","BLOW"),("CRUSHING","BLOWE")]
+--      spoonerism ("fighting","liar") = [("LIGHTING","FIRE")]
 spoonerism :: (String, String) -> [(String,String)]
 spoonerism (w1, w2) = [ words | a <- p1, b <- p2, words <- spoonerism' a b]
     where 
