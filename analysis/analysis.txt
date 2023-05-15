@@ -61,7 +61,12 @@ remunerator, re numerator -- spoonerisms. quote for future works
 think abt usage of this other than crossword:
 - speech recognition, especially from non native speakers with accents so fuzzy homophone
    can catch it.
+- give to crossword setter
 
+
+Future work:
+- using neural network to help create dist MAtrix
+- create pronunciations for unknown words
 
 given [[...,high,tall,..],[jack,...]] we could filter stuff that obviously is not a homophone of hijack
    to save computational time but we sacrifice this for simpler code.
@@ -116,3 +121,9 @@ ghci> debugFuzzyHomophones "synch"
 
 ghci> debugFuzzyHomophones "dramatic"
 [(0.0,"DRAMATIC"),(4.0,"TRAUMATIC")]
+
+Spoonerisms: 29035 5 down remunerator
+
+solver.cabal and Evaluation.hs
+
+gitlab

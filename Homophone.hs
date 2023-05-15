@@ -9,7 +9,6 @@ import Data.Maybe
 import Data.Array
 
 import Arpabet
-import GHC.Num
 
 data Accent = British | None | All
             deriving (Eq, Show, Read)
@@ -150,7 +149,7 @@ includes x y = includes' x y x
         includes' (x : xs) (y : ys) xx@(z : zs)
             | x == y    = includes' xs ys xx
             | otherwise = if y == z then includes' zs ys xx else includes' xx ys xx
-    
+
 -- =========================================== REVERSE DICT =========================================== --
 
 -- generates words that have the exact same phonetic spelling as the given word.
@@ -228,3 +227,39 @@ debugFuzzyArpabet n (x : xs)
     = nub [ (n', arp : m) | arp <- [AA .. ZH]
     , n + distMatrix ! (x, arp) <= threshold
     , (n', m) <- debugFuzzyArpabet (n + distMatrix ! (x, arp)) xs ]
+
+-- ========================================== MISCELLANEOUS ========================================== --
+
+{-
+    Spoonerism: 2 words in which initial letters or syllables get swapped and create new words
+    e.g. Blushing Crow -> Crushing Blow
+         Key Naps -> Kneecaps
+-}
+
+-- This function takes in a pair of words and outputs a list of pairs of words that are generated
+-- by spoonerism.
+-- e.g. spoonerism ("BLUSHING","CROW") = [("CRUSHING","BLEAU"),("CRUSHING","BLOW"),("CRUSHING","BLOWE")]
+spoonerism :: (String, String) -> [(String,String)]
+spoonerism (w1, w2) = [ words | a <- p1, b <- p2, words <- spoonerism' a b]
+    where 
+        p1 = fromMaybe [] (lookupArpabet w1)
+        p2 = fromMaybe [] (lookupArpabet w2)
+    
+spoonerism' :: [String] -> [String] -> [(String, String)]
+spoonerism' x y = [ (s1, s2) | s1 <- swap1, s2 <- swap2]
+    where
+        swap1 = fromMaybe [] $ lookupWords $ map fromArpabet (cons2 ++ rest1)
+        swap2 = fromMaybe [] $ lookupWords $ map fromArpabet (cons1 ++ rest2)
+        (cons1, rest1) = splitWhen isVowel (map toArpabet x)
+        (cons2, rest2) = splitWhen isVowel (map toArpabet y)
+
+-- splits list by given predicate
+-- e.g splitWhen (> 3) [1,2,3,4,5,2] = ([1,2,3],[4,5,2])
+splitWhen :: (a -> Bool) -> [a] -> ([a], [a])
+splitWhen func xx = splitWhen' func xx []
+    where
+        splitWhen' :: (a -> Bool) -> [a] -> [a] -> ([a],[a])
+        splitWhen' func xx@(x : xs) leftover
+            | func x = (leftover, xx)
+            | otherwise = splitWhen' func xs (leftover ++ [x])
+            

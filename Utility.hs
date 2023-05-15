@@ -1,4 +1,4 @@
-module Format where
+module Utility where
 
 import Control.Monad
 import System.IO.Unsafe
