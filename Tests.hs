@@ -216,7 +216,7 @@ homophonesTable
     , (["haw"], ["whore"], All) ==> True
     , (["hay"], ["hey"], All) ==> True
     , (["heal"], ["heel"], All) ==> True
-    , (["heal"], ["hell"], All) ==> True
+    , (["heal"], ["he'll"], All) ==> True
     , (["hear"], ["here"], All) ==> True
     , (["heard"], ["herd"], All) ==> True
     , (["heel"], ["he'll"], All) ==> True -- he'll is a contraction of he will
@@ -605,7 +605,53 @@ falsePositives
     , (["throng"], ["train"], All) ==> False
     , (["purse"], ["piece"], All) ==> False
     , (["right"], ["wrought"], All) ==> False
-    , (["write"], ["route"], All) ==> False
+    , (["write"], ["route"], All) ==> False -- beyond this is taken from datamuse sl and their respective score
+    , (["grief"], ["graph"], All) ==> False -- (100,95)
+    , (["ball"], ["bill"], All) ==> False -- (100,95)
+    , (["ball"], ["bail"], All) ==> False -- (100,95)
+    , (["crazy"], ["arese"], All) ==> False -- (100,88)
+    , (["dollar"], ["hollar"], All) ==> False -- (100,88)
+    , (["dollar"], ["dealer"], All) ==> False -- (100,95)
+    , (["coconut"], ["kitchenette"], All) ==> False -- (100,82)
+    , (["eagle"], ["legal"], All) ==> False -- (100,90)
+    , (["eagle"], ["oogle"], All) ==> False -- (100,93)
+    , (["roar"], ["drawer"], All) ==> False -- (100,90)
+    , (["brain"], ["brown"], All) ==> False -- (100,95)
+    , (["topic"], ["tropic"], All) ==> False -- (100,90)
+    , (["topic"], ["toothpick"], All) ==> False -- (100,85)
+    , (["treat"], ["st"], All) ==> False -- (100,90)
+    , (["elephant"], ["elegant"], All) ==> False -- (100,85)
+    , (["scale"], ["school"], All) ==> False -- (100,97)
+    , (["scale"], ["sail"], All) ==> False -- (100,90)
+    , (["crack"], ["quack"], All) ==> False -- (100,90)
+    , (["chair"], ["sheer"], All) ==> False -- (100,90)
+    , (["chair"], ["teur"], All) ==> False -- (100,90)
+    , (["fish"], ["fit"], All) ==> False -- (100,90)
+    , (["fish"], ["fetch"], All) ==> False -- (100,92)
+    , (["donut"], ["donate"], All) ==> False -- (100,95)
+    , (["dance"], ["das"], All) ==> False -- (100,90)
+    , (["money"], ["mummy"], All) ==> False -- (100,95)
+    , (["crude"], ["crowd"], All) ==> False -- (100,97)
+    , (["fine"], ["phone"], All) ==> False -- (100,95)
+    , (["colour"], ["cull"], All) ==> False -- (100,90)
+    , (["read"], ["rude"], All) ==> False -- (100,95)
+    , (["rhode"], ["arrayed"], All) ==> False -- (100,95)
+    , (["monkey"], ["mulkey"], All) ==> False -- (100,91)
+    , (["camp"], ["clamp"], All) ==> False -- (100,90)
+    , (["baby"], ["boobie"], All) ==> False -- (100,95)
+    , (["child"], ["wilde"], All) ==> False -- (100,88)
+    , (["child"], ["shield"], All) ==> False -- (100,93)
+    , (["kill"], ["kyle"], All) ==> False -- (100,95)
+    , (["lucky"], ["leaky"], All) ==> False -- (100,95)
+    , (["lucky"], ["lucks"], All) ==> False -- (100,90)
+    , (["lego"], ["logo"], All) ==> False -- (100,95)
+    , (["buy"], ["boe"], All) ==> False -- (100,95)
+    , (["cat"], ["kit"], All) ==> False -- (100,95)
+    , (["cat"], ["cant"], All) ==> False -- (100,90)
+    , (["cat"], ["cash"], All) ==> False -- (100,90)
+    , (["stab"], ["steep"], All) ==> False -- (100,90)
+    , (["nugget"], ["negate"], All) ==> False -- (100,92)
+    , (["shock"], ["chic"], All) ==> False -- (100,95)
     ] 
 
 multWords
@@ -630,6 +676,25 @@ multWords
     , (["m","t"], ["empty"], All) ==> True
     , (["n","t"], ["anti"], All) ==> True
     , (["i","v"], ["ivy"], All) ==> True
+    , (["tied","marx"], ["tide","marks"], All) ==> True -- Guardian 24384 29 Across
+    , (["seafarer"], ["see","fairer"], All) ==> True -- Guardian 24384 5 Down
+    , (["aye","sup"], ["ice","up"], All) ==> True -- Guardian 25929 10 Across
+    , (["candy","dates"], ["candidates"], All) ==> True -- Independent 10,735 14 Down
+    , (["boo","k"], ["bouquet"], All) ==> True -- Guardian Cryptic N° 26,064 17 Down
+    , (["you're","asia"], ["eurasia"], All) ==> True -- Guardian Quiptic 1,226 4 Down
+    , (["to","kill","a"], ["tequila"], All) ==> True -- Guardian Cryptic N° 26,064 19 Down
+    , (["home","spun"], ["holmes","pun"], All) ==> True -- Guardian Cryptic 28,692 16 Down (will pass if Z == S)
+    , (["her","suit"], ["hirsute"], All) ==> True -- Guardian 23,993 15 Across
+    , (["sioux","dough"], ["pseudo"], All) ==> True -- Guardian 25,512 1 Down
+    , (["pike","rust"], ["pie","crust"], All) ==> True -- Guardian 25,512 7 Down
+    , (["proper","gait"], ["propagate"], All) ==> True -- Guardian 25,512 15 Down
+    , (["read","panned","a"], ["red","panda"], All) ==> True -- Guardian 25,512 8 Down
+    , (["boos","crews"], ["booze","cruise"], All) ==> True -- Guardian Cryptic 28,754 9,3 Across
+    , (["who","to"], ["hutu"], All) ==> True -- Guardian Cryptic 28,729 18 Across
+    , (["or","lock"], ["oarlock"], All) ==> True -- Everyman 3,993 24 Across
+    , (["sell","fish"], ["selfish"], All) ==> True -- Guardian Cryptic 29,070 10 Across
+    , (["in","cider"], ["insider"], All) ==> True -- Guardian Cryptic 29,070 18 Down
+    , (["can","ah","pee"], ["canopy"], All) ==> True
     , (["past","oral"], ["pastoral"], All) ==> True -- Fuzzy homophone. Remove "R"
     , (["x","l","anse"], ["excellence"], All) ==> True
     ]

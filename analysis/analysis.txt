@@ -35,6 +35,7 @@ TODO:
 - east london (TH -> F)
 - Construct diff ways of pronouncing words (dialect and stuff)
 - "EYOT"/"AIT" similar spelling to "buoy"
+- separating words into syllables (homophones for word that doesn't exist)
 
 former spoken on the radio
  |      |
@@ -126,4 +127,28 @@ Spoonerisms: 29035 5 down remunerator
 
 solver.cabal and Evaluation.hs
 
-gitlab
+dodgy Homophones:
+Guardian 26,698 19 Down
+   ghci> isHomophone ["cure","it"] ["curate"] All
+   True
+   ghci> lookupArpabet "cure"
+   Just [["K","Y","UH","R"]]
+   ghci> lookupArpabet "it"
+   Just [["IH","T"],["IH","T"]]
+   ghci> lookupArpabet "curate"
+   Just [["K","Y","UH","R","AH","T"]]
+
+Independent 10,735
+   ghci> isHomophone ["faux","beer"] ["phobia"] All
+   False
+   ghci> lookupArpabet "faux"
+   Just [["F","OW"]]
+   ghci> lookupArpabet "beer"
+   Just [["B","IH","R"]]
+   ghci> lookupArpabet "phobia"
+   Just [["F","OW","B","IY","AH"]]
+
+Guardian Cryptic N° 26,064
+   Drink booked with 1 across 23, roughly speaking? (7) (ans of 1,23 Across is Mockingbird)
+   TEQUILA		Ouch. The culmination of progressively more playful homophones 
+               (Paul does say ‘roughly’), a reference to the book To Kill a Mockingbird by Harper Lee. 

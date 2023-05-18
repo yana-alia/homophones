@@ -5,7 +5,7 @@ data ARPABET = AA | AE | AH | AO | AW | AX | AXR | AY | EH | ER | EY | -- VOWELS
                K | L | M | N | NG | NX | P | Q | R | S | SH | T | TH | -- CONSONENTS
                V | W | WH | Y | Z | ZH                                 -- CONSONENTS
 
-* Consonents to Vowels are valued 100 (max distance) and vice versa *
+* Consonents to Vowels are valued inf (max distance) and vice versa *
 
 Special case: CH is similar to K ONLY when it is after a vowel in a syllable *TODO*
               R and ER are similar when it is at the end of a syllable *TODO*
@@ -33,34 +33,522 @@ UX  3   3   3   3   3   3    3   6   3   4   4   3   3   3   3   5   1   1   0
 
 
      B  CH   D  DH  DX  EL  EM  EN   F   G  HH  JH   K   L   M   N  NG  NX   P   Q   R   S  SH   T  TH   V   W  WH   Y   Z  ZH
-B    0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-CH 100   0 100 100 100 100 100 100 100 100 100   3   3 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-D  100 100   0   1   2 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   3   3 100 100 100 100 100 100
-DH 100 100   1   0   1 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   3   3 100 100 100 100 100 100
-DX 100 100   2   1   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   3   3 100 100 100 100 100 100
-EL 100 100 100 100 100   0 100 100 100 100 100 100 100   1 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-EM 100 100 100 100 100 100   0 100 100 100 100 100 100 100   1 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-EN 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100   1   2   3 100 100 100 100 100 100 100 100 100 100 100 100 100
-F  100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-G  100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-HH 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-JH 100   3 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-K  100   3 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-L  100 100 100 100 100   1 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-M  100 100 100 100 100 100   1 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100
-N  100 100 100 100 100 100 100   1 100 100 100 100 100 100 100   0   1   2 100 100 100 100 100 100 100 100 100 100 100 100 100
-NG 100 100 100 100 100 100 100   2 100 100 100 100 100 100 100   1   0   1 100 100 100 100 100 100 100 100 100 100 100 100 100
-NX 100 100 100 100 100 100 100   3 100 100 100 100 100 100 100   2   1   0 100 100 100 100 100 100 100 100 100 100 100 100 100
-P  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100 100
-Q  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100 100
-R  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100 100
-S  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100 100 100 100
-SH 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100 100   2   1
-T  100 100   3   3   3 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0   1 100 100 100 100 100 100
-TH 100 100   3   3   3 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   1   0 100 100 100 100 100 100
-V  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100 100 100 100
-W  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0   1 100 100 100
-WH 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   1   0 100 100 100
-Y  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   0 100 100
-Z  100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   2 100 100 100 100 100 100   0   1
-ZH 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100   1 100 100 100 100 100 100   1   0
+B    0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+CH inf   0 inf inf inf inf inf inf inf inf inf   3   3 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+D  inf inf   0   1   2 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   3   3 inf inf inf inf inf inf
+DH inf inf   1   0   1 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   3   3 inf inf inf inf inf inf
+DX inf inf   2   1   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   3   3 inf inf inf inf inf inf
+EL inf inf inf inf inf   0 inf inf inf inf inf inf inf   1 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+EM inf inf inf inf inf inf   0 inf inf inf inf inf inf inf   1 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+EN inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf   1   2   3 inf inf inf inf inf inf inf inf inf inf inf inf inf
+F  inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+G  inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+HH inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+JH inf   3 inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+K  inf   3 inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+L  inf inf inf inf inf   1 inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+M  inf inf inf inf inf inf   1 inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf
+N  inf inf inf inf inf inf inf   1 inf inf inf inf inf inf inf   0   1   2 inf inf inf inf inf inf inf inf inf inf inf inf inf
+NG inf inf inf inf inf inf inf   2 inf inf inf inf inf inf inf   1   0   1 inf inf inf inf inf inf inf inf inf inf inf inf inf
+NX inf inf inf inf inf inf inf   3 inf inf inf inf inf inf inf   2   1   0 inf inf inf inf inf inf inf inf inf inf inf inf inf
+P  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf inf
+Q  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf inf
+R  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf inf
+S  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf inf inf inf
+SH inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf inf   2   1
+T  inf inf   3   3   3 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0   1 inf inf inf inf inf inf
+TH inf inf   3   3   3 inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   1   0 inf inf inf inf inf inf
+V  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf inf inf inf
+W  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0   1 inf inf inf
+WH inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   1   0 inf inf inf
+Y  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   0 inf inf
+Z  inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   2 inf inf inf inf inf inf   0   1
+ZH inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf inf   1 inf inf inf inf inf inf   1   0
+
+iteration 1: (Follow initial graph map) & 1.5 (R and ER not inf dist due to special case)
+        ix = [ (i, j) | i <- [AA .. ZH], j <- [AA .. ZH]]
+        --        AA   AE   AH   AO   AW   AX  AXR   AY   EH   ER   EY   IH   IX   IY   OW   OY   UH   UW   UX    B   CH    D   DH   DX   EL   EM   EN    F    G   HH   JH    K    L    M    N   NG   NX    P    Q    R    S   SH    T   TH    V    W   WH    Y    Z   ZH
+        val   = [  0,   3,   1,   1,   3,   1,   1,   5,   3,   2,   3,   4,   4,   4,   4,   6,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   0,   3,   3,   3,   3,   3,   4,   1,   3,   2,   3,   3,   3,   3,   5,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   0,   1,   2,   1,   1,   5,   3,   2,   3,   4,   4,   4,   3,   5,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   1,   0,   3,   1,   1,   5,   3,   2,   3,   4,   4,   4,   4,   6,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   3,   2,   3,   0,   3,   3,   5,   3,   4,   3,   3,   3,   3,   1,   3,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   1,   1,   3,   0,   1,   5,   3,   2,   3,   4,   4,   4,   4,   6,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   1,   1,   3,   1,   0,   5,   3,   1,   3,   3,   3,   3,   4,   6,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   5,   4,   5,   5,   5,   5,   5,   0,   3,   5,   2,   5,   5,   5,   5,   7,   6,   6,   6, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   1,   3,   3,   3,   3,   3,   3,   0,   3,   1,   3,   3,   3,   3,   5,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   2,   3,   2,   2,   4,   2,   1,   5,   3,   0,   3,   3,   3,   3,   5,   7,   4,   4,   4, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   2,   3,   3,   3,   3,   3,   2,   1,   3,   0,   3,   3,   3,   3,   5,   4,   4,   4, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   4,   3,   4,   4,   3,   4,   3,   5,   3,   3,   3,   0,   1,   1,   3,   5,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   4,   3,   4,   4,   3,   4,   3,   5,   3,   3,   3,   1,   0,   1,   3,   5,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   4,   3,   4,   4,   3,   4,   3,   5,   3,   3,   3,   1,   1,   0,   3,   5,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   4,   3,   3,   4,   1,   4,   4,   5,   3,   5,   3,   3,   3,   3,   0,   2,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   6,   5,   5,   6,   3,   6,   6,   7,   5,   7,   5,   5,   5,   5,   2,   0,   5,   5,   5, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   3,   3,   3,   3,   3,   3,   6,   3,   4,   4,   3,   3,   3,   3,   5,   0,   1,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   3,   3,   3,   3,   3,   3,   6,   3,   4,   4,   3,   3,   3,   3,   5,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   3,   3,   3,   3,   3,   3,   6,   3,   4,   4,   3,   3,   3,   3,   5,   1,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf,   1,   2,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf,   0,   1,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2, inf, inf, inf, inf, inf, inf, inf,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf,   2,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf,   2,   1,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2, inf, inf, inf, inf, inf, inf,   0,   1,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf,   1,   0]
+
+     THRESHOLD <2
+     Starting...
+     > Morse homophoneTable ["bees"] ["bs"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["essay"] ["sa"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["eyes"] ["is"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["ewes"] ["us"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["owes"] ["os"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["teas"] ["ts"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["tees"] ["ts"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["use"] ["us"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["boy"] ["buoy"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["conger"] ["conga"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["ease"] ["ee"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["ease"] ["es"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["fie"] ["phi"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["new"] ["neu"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["pascal"] ["paschal"] All = False
+     test case expected: True
+
+     Morse homophoneTable: 465 / 480
+
+     > Non-Homophones ["rockett"] ["racket"] All = True
+     test case expected: False
+
+     > Non-Homophones ["bach"] ["book"] All = True
+     test case expected: False
+
+     > Non-Homophones ["beak"] ["buck"] All = True
+     test case expected: False
+
+     > Non-Homophones ["build"] ["bowled"] All = True
+     test case expected: False
+
+     > Non-Homophones ["throng"] ["train"] All = True
+     test case expected: False
+
+     > Non-Homophones ["purse"] ["piece"] All = True
+     test case expected: False
+
+     > Non-Homophones ["right"] ["wrought"] All = True
+     test case expected: False
+
+     > Non-Homophones ["write"] ["route"] All = True
+     test case expected: False
+
+     > Non-Homophones ["grief"] ["graph"] All = True
+     test case expected: False
+
+     > Non-Homophones ["ball"] ["bill"] All = True
+     test case expected: False
+
+     > Non-Homophones ["ball"] ["bail"] All = True
+     test case expected: False
+
+     > Non-Homophones ["dollar"] ["dealer"] All = True
+     test case expected: False
+
+     > Non-Homophones ["coconut"] ["kitchenette"] All = True
+     test case expected: False
+
+     > Non-Homophones ["brain"] ["brown"] All = True
+     test case expected: False
+
+     > Non-Homophones ["scale"] ["school"] All = True
+     test case expected: False
+
+     > Non-Homophones ["donut"] ["donate"] All = True
+     test case expected: False
+
+     > Non-Homophones ["crude"] ["crowd"] All = True
+     test case expected: False
+
+     > Non-Homophones ["fine"] ["phone"] All = True
+     test case expected: False
+
+     > Non-Homophones ["read"] ["rude"] All = True
+     test case expected: False
+
+     > Non-Homophones ["kill"] ["kyle"] All = True
+     test case expected: False
+
+     > Non-Homophones ["lucky"] ["leaky"] All = True
+     test case expected: False
+
+     > Non-Homophones ["lego"] ["logo"] All = True
+     test case expected: False
+
+     > Non-Homophones ["cat"] ["kit"] All = True
+     test case expected: False
+
+     > Non-Homophones ["nugget"] ["negate"] All = True
+     test case expected: False
+
+     > Non-Homophones ["shock"] ["chic"] All = True
+     test case expected: False
+
+     Non-Homophones: 30 / 55
+
+     Pure homophones: 29614 / 29614
+
+     > Multi-word homophones ["home","spun"] ["holmes","pun"] All = False
+     test case expected: True
+
+     > Multi-word homophones ["past","oral"] ["pastoral"] All = False
+     test case expected: True
+
+     Multi-word homophones: 40 / 42
+
+Iteration 2: Different vowels have score inf
+        ix = [ (i, j) | i <- [AA .. ZH], j <- [AA .. ZH]]
+        --        AA   AE   AH   AO   AW   AX  AXR   AY   EH   ER   EY   IH   IX   IY   OW   OY   UH   UW   UX    B   CH    D   DH   DX   EL   EM   EN    F    G   HH   JH    K    L    M    N   NG   NX    P    Q    R    S   SH    T   TH    V    W   WH    Y    Z   ZH
+        val   = [  0,   3,   1,   1,   3,   1,   1,   5, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   0,   3,   3,   3,   3,   3,   4, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   0,   1,   2,   1,   1,   5, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   1,   0,   3,   1,   1,   5, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   3,   2,   3,   0,   3,   3,   5, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   1,   1,   3,   0,   1,   5, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   1,   1,   3,   1,   0,   5, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   5,   4,   5,   5,   5,   5,   5,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf,   0,   3,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf,   3,   0,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf,   1,   3,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf,   1,   2,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf,   0,   1,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2, inf, inf, inf, inf, inf, inf, inf,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf,   2,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf,   2,   1,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2, inf, inf, inf, inf, inf, inf,   0,   1,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf,   1,   0]
+
+     THRESHOLD <2
+     Starting...
+     > Morse homophoneTable ["bees"] ["bs"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["essay"] ["sa"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["eyes"] ["is"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["ewes"] ["us"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["owes"] ["os"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["teas"] ["ts"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["tees"] ["ts"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["use"] ["us"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["boy"] ["buoy"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["conger"] ["conga"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["complement"] ["compliment"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["ease"] ["ee"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["ease"] ["es"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["fie"] ["phi"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["manna"] ["manner"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["moor"] ["more"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["new"] ["neu"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["pascal"] ["paschal"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["patten"] ["pattern"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["rota"] ["rotor"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["rouse"] ["rows"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["shake"] ["sheikh"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["tuba"] ["tuber"] All = False
+     test case expected: True
+
+     Morse homophoneTable: 457 / 480
+
+     > Non-Homophones ["rockett"] ["racket"] All = True
+     test case expected: False
+
+     > Non-Homophones ["right"] ["wrought"] All = True
+     test case expected: False
+
+     > Non-Homophones ["write"] ["route"] All = True
+     test case expected: False
+
+     Non-Homophones: 52 / 55
+
+     Pure homophones: 29614 / 29614
+
+     > Multi-word homophones ["cannes","vess"] ["canvas"] All = False
+     test case expected: True
+
+     > Multi-word homophones ["s","x"] ["essex"] All = False
+     test case expected: True
+
+     > Multi-word homophones ["x","l"] ["excel"] All = False
+     test case expected: True
+
+     > Multi-word homophones ["n","t"] ["anti"] All = False
+     test case expected: True
+
+     > Multi-word homophones ["candy","dates"] ["candidates"] All = False
+     test case expected: True
+
+     > Multi-word homophones ["home","spun"] ["holmes","pun"] All = False
+     test case expected: True
+
+     > Multi-word homophones ["proper","gait"] ["propagate"] All = False
+     test case expected: True
+
+     > Multi-word homophones ["past","oral"] ["pastoral"] All = False
+     test case expected: True
+
+     > Multi-word homophones ["x","l","anse"] ["excellence"] All = False
+     test case expected: True
+
+     Multi-word homophones: 33 / 42  
+
+Iteration 3:
+        ix = [ (i, j) | i <- [AA .. ZH], j <- [AA .. ZH]]
+        --        AA   AE   AH   AO   AW   AX  AXR   AY   EH   ER   EY   IH   IX   IY   OW   OY   UH   UW   UX    B   CH    D   DH   DX   EL   EM   EN    F    G   HH   JH    K    L    M    N   NG   NX    P    Q    R    S   SH    T   TH    V    W   WH    Y    Z   ZH
+        val   = [  0,   3,   1,   1,   3,   1,   1, inf,   3,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   0,   3,   3,   3,   3,   3,   4,   1,   3,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   0,   1,   2,   1,   1, inf,   3,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   1,   0,   3,   1,   1, inf,   3,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   3,   2,   3,   0,   3,   3, inf,   3, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   1,   1,   3,   0,   1, inf,   3,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   1,   3,   1,   1,   3,   1,   0, inf,   3,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf,   4, inf, inf, inf, inf, inf,   0,   3, inf,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   3,   1,   3,   3,   3,   3,   3,   3,   0,   3,   1,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                   2,   3,   2,   2, inf,   2,   1, inf,   3,   0,   3,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf,   2, inf, inf, inf, inf, inf,   2,   1,   3,   0,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf,   3,   3,   3,   0,   1,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf,   3,   3,   3,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf,   3,   3,   3,   1,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf,   1,   2,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf, inf,   0,   1,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2, inf, inf, inf, inf, inf, inf, inf,   1,   0,   1, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf,   2,   1,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf, inf,   2,   1,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3,   3,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0, inf, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0,   1, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   0, inf, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   2, inf, inf, inf, inf, inf, inf,   0,   1,
+                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf,   1,   0]
+
+     Starting...
+     > Morse homophoneTable ["bees"] ["bs"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["essay"] ["sa"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["eyes"] ["is"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["ewes"] ["us"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["owes"] ["os"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["teas"] ["ts"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["tees"] ["ts"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["use"] ["us"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["boy"] ["buoy"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["conger"] ["conga"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["ease"] ["ee"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["ease"] ["es"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["fie"] ["phi"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["moor"] ["more"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["new"] ["neu"] All = False
+     test case expected: True
+
+     > Morse homophoneTable ["pascal"] ["paschal"] All = False
+     test case expected: True
+
+     Morse homophoneTable: 464 / 480
+
+     > Non-Homophones ["rockett"] ["racket"] All = True
+     test case expected: False
+
+     > Non-Homophones ["purse"] ["piece"] All = True
+     test case expected: False
+
+     Non-Homophones: 53 / 55
+
+     Pure homophones: 29614 / 29614
+
+     > Multi-word homophones ["candy","dates"] ["candidates"] All = False
+     test case expected: True
+
+     > Multi-word homophones ["home","spun"] ["holmes","pun"] All = False
+     test case expected: True
+
+     > Multi-word homophones ["can","i","pee"] ["canopy"] All = False
+     test case expected: True
+
+     > Multi-word homophones ["past","oral"] ["pastoral"] All = False
+     test case expected: True
+
+     Multi-word homophones: 38 / 42

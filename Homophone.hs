@@ -26,7 +26,7 @@ isPureHomophone x y = matchAny (combine phonX) (combine phonY)
 -- Takes two list of words and compares their phonetic spellings and outputs True
 -- if their fuzzy score is below a certain threshold
 isHomophone :: [String] -> [String] -> Accent -> Bool
-isHomophone x y acc = fuzzyScore combX combY < 1.5
+isHomophone x y acc = fuzzyScore combX combY < 2
     where
         combX = miscChange $ convertToAccent acc (combine phonX)
         combY = miscChange $ convertToAccent acc (combine phonY)
@@ -237,6 +237,7 @@ debugFuzzyArpabet n (x : xs)
          Shoving Leopard -> Loving Shepard
          Fighting Liar -> Lighting Fire
          Dean Busy -> Bean Dizzy
+         Nosy Cook -> Cozy Nook
 -}
 
 -- This function takes in a pair of words and outputs a list of pairs of words that are generated
