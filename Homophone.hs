@@ -118,13 +118,20 @@ convertToBritish (R : xs)
     | otherwise = R : convertToBritish xs
 convertToBritish (x : xs) = x : convertToBritish xs
 
--- =============================================== MISC =============================================== --
+-- ============================================ MISC CHANGES ============================================ --
 
 miscChange :: [Pronunciation] -> [Pronunciation]
 miscChange [] = []
-miscChange (x : xs)
+miscChange xx@(x : xs)
     | AY `elem` x = x : changeAYAH x : miscChange xs
+    | ER `elem` x = x : changeAOR x : miscChange xs
     | otherwise   = x : miscChange xs
+
+-- e.g. past oral vs pastoral [["P","AE","S","T"],["AO","R","AH","L"]] vs ["P","AE","S","T","ER","AH","L"]
+changeAOR :: Pronunciation -> Pronunciation
+changeAOR [] = []
+changeAOR (ER : xs) = AO : R : changeAOR xs
+changeAOR (x : xs) = x : changeAOR xs
 
 -- changing AY -> AY,AH is chosen over AY,AH -> AY to increase potential fuzzy homophones
 -- from multiple words.

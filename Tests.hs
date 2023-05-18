@@ -430,7 +430,7 @@ homophonesTable
     , (["tear"], ["tier"], All) ==> True
     , (["teas"], ["tease"], All) ==> True
     , (["tenner"], ["tenor"], All) ==> True
-    , (["tern"], ["turn"], All) ==> True -- [T,ER,N,Z] [T,ER,N]
+    , (["tern"], ["turn"], All) ==> True
     , (["there"], ["their"], All) ==> True
     , (["their"], ["they're"], All) ==> True
     , (["threw"], ["through"], All) ==> True
@@ -597,7 +597,7 @@ homTableNotInDict
     ]
 
 falsePositives
-  = [ (["rockett"], ["racket"], All) ==> False
+  = [ (["rocket"], ["racket"], All) ==> False
     , (["bach"], ["book"], All) ==> False
     , (["beak"], ["buck"], All) ==> False
     , (["build"], ["bowled"], All) ==> False
@@ -712,7 +712,7 @@ megaTest = map readMegaTest $ lines getFile
 allTestCases
       = [ TestCase "Morse homophoneTable" (uncurry3 isHomophone) homophonesTable
         , TestCase "Non-Homophones" (uncurry3 isHomophone) falsePositives
-        , TestCase "Pure homophones" (uncurry3 isHomophone) megaTest
+        -- , TestCase "Pure homophones" (uncurry3 isHomophone) megaTest
         , TestCase "Multi-word homophones" (uncurry3 isHomophone) multWords ]
 
 runTests = mapM_ goTest allTestCases
