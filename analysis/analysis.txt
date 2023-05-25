@@ -152,3 +152,8 @@ Guardian Cryptic N° 26,064
    Drink booked with 1 across 23, roughly speaking? (7) (ans of 1,23 Across is Mockingbird)
    TEQUILA		Ouch. The culmination of progressively more playful homophones 
                (Paul does say ‘roughly’), a reference to the book To Kill a Mockingbird by Harper Lee. 
+
+
+In order to put into existing solver we have to forward solve which involves a cartesian product
+
+the less lazy ver is to split
