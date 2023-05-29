@@ -5,6 +5,7 @@ import qualified Data.Map as Map
 
 import TestSuite
 import Homophone
+import Arpabet (checkMatrixSym)
 
 
 {-
@@ -697,6 +698,8 @@ multWords
     , (["can","ah","pee"], ["canopy"], All) ==> True
     , (["past","oral"], ["pastoral"], All) ==> True -- Fuzzy homophone. Remove "R"
     , (["x","l","anse"], ["excellence"], All) ==> True
+    , (["cure","it"], ["curate"], All) ==> True
+    , (["faux","beer"], ["phobia"], All) ==> True -- Independent 10,735
     ]
 
 {-# NOINLINE megaTest #-}
@@ -718,6 +721,9 @@ allTestCases
 runTests = mapM_ goTest allTestCases
 
 main = do
+    let sym = checkMatrixSym
+    putStr "Distance matrix symmetry: "
+    print sym
     putStrLn "Starting..."
     time runTests
     putStrLn "Done."

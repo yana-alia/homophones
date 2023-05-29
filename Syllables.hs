@@ -44,6 +44,8 @@ vPortion "le" syllable _ = (syllable ++ "le", "") -- rule 2 (silent e)
 vPortion "se" syllable _ = (syllable ++ "se", "") -- silent e
 vPortion "me" syllable _ = (syllable ++ "me", "") -- silent e
 vPortion "ne" syllable _ = (syllable ++ "ne", "") -- silent e
+vPortion "ion" syllable _ = (syllable ++ "ion", "")
+vPortion "ious" syllable _ = (syllable ++ "ious", "")
 vPortion [c] syllable 2
     | vowel c = (syllable, [c])
     | otherwise = (syllable ++ [c], "")

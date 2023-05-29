@@ -17,8 +17,8 @@ type Pronunciation = [ARPABET]
 
 -- Takes two list of words and compares their phonetic spellings and outputs True
 -- if they are pure homophones of each other and false otherwise
-isPureHomophone :: [String] -> [String] -> Bool
-isPureHomophone x y = matchAny (combine phonX) (combine phonY)
+isPureHomophone :: [String] -> [String] -> Accent -> Bool
+isPureHomophone x y _ = matchAny (combine phonX) (combine phonY)
     where
         phonX = map (fromMaybe [] . lookupArpabet) x
         phonY = map (fromMaybe [] . lookupArpabet) y
