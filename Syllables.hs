@@ -2,7 +2,6 @@ module Syllables where
 
 
 import Data.List
-import Debug.Trace
 
 {-
     C = Consonant      V = Vowel
@@ -33,7 +32,8 @@ splitSyllables word = syllable : splitSyllables remaining
 findSyllable :: String -> (String, String)
 findSyllable word@(w : ws)
     | w == 'y'  = vPortion ws "y" 1 -- treating y as a consonant
-    | vowel w   = vPortion word "" 0
+    | word == "es" = ("es", "")
+    | vowel w   = vPortion word "" 0 
     | otherwise = cPortion word "" 0
 
 -- Used to handle vowels (V) portion. Assumes to be the start of a word or the 
@@ -45,6 +45,10 @@ vPortion "se" syllable _  = (syllable ++ "se", "") -- silent e
 vPortion "me" syllable _  = (syllable ++ "me", "") -- silent e
 vPortion "ne" syllable _  = (syllable ++ "ne", "") -- silent e
 vPortion "ion" syllable _ = (syllable ++ "ion", "")
+vPortion "es" syllable _ = (syllable, "es") -- plural
+vPortion "s" syllable _ = (syllable ++ "s", "") -- plural
+vPortion cc@(c : "es") syllable _ = (syllable ++ [c], "es") -- plural
+vPortion cc@(c : "s") syllable _ = (syllable ++ cc, "") -- plural
 vPortion [c] syllable 2
     | vowel c   = (syllable, [c])
     | otherwise = (syllable ++ [c], "")
@@ -68,6 +72,8 @@ cPortion "me" syllable _ = (syllable ++ "me", "") -- silent e
 cPortion "ne" syllable _ = (syllable ++ "ne", "") -- silent e
 cPortion [c] syllable _  = (syllable ++ [c], "") 
 cPortion cc@(c1 : c2 : cs@(c3 : css)) syllable n
+    | n /= 0 && isConsTeams3 && cs == "e"       = (syllable ++ cc, "") -- legal CCC consTeams in 1 syllable
+    | n /= 0 && isConsTeams2 && cs == "e"       = (syllable ++ cc, "") 
     | n /= 0 && isConsTeams3 && vowel (head cs) = (syllable, cc) -- legal CCC consTeams in 1 syllable
     | n /= 0 && isConsTeams2 && vowel c3        = (syllable, cc) -- legal CC in 1 syllable
     | isConsTeams3                              = vPortion css (syllable ++ [c1, c2, c3]) (n + 1) -- legal CCC 
@@ -79,10 +85,11 @@ cPortion cc@(c1 : c2 : cs@(c3 : css)) syllable n
     where
         isConsTeams3 = any (`isPrefixOf` cc) consTeams3
         isConsTeams2 = any (`isPrefixOf` cc) consTeams2
-cPortion cc@(c1 : c2 : cs) syllable n
+cPortion cc@(c1 : c@(c2 : cs)) syllable n
     | any (`isPrefixOf` cc) consTeams2     = vPortion cs (syllable ++ [c1, c2]) (n + 1) -- legal CC in 1 syllable
     | c1 == 'y'                            = vPortion (c2:cs) (syllable ++ [c1]) (n + 1) -- y is a consonant too
     | vowel c1                             = (syllable, cc) -- split at CV/VC
+    | n /= 0 && not (vowel c1) && c == "e" = (syllable ++ cc, "")
     | n /= 0 && not (vowel c1) && vowel c2 = (syllable, cc)
     | otherwise                            = vPortion (c2:cs) (syllable ++ [c1]) (n + 1)  
 
@@ -100,4 +107,4 @@ consTeams2 = ["bl", "cl", "fl", "gl", "pl", "sl", "sc", "sk", "sm", "sn", "ld",
               "ch", "ck", "sh", "th", "wh", "ph", "ng", "gh", "mb", "qu"]
 
 consTeams3 :: [String] -- Consonant Blends and Consonant Diagraphs 3 letters
-consTeams3 = ["scr", "spl", "spr", "str", "shr", "squ", "thr"]
+consTeams3 = ["scr", "spl", "spr", "str", "shr", "squ", "thr", "tch"]
