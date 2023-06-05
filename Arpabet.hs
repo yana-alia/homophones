@@ -90,7 +90,7 @@ distMatrix :: Array (ARPABET, ARPABET) Float
 distMatrix = array ((AA,AA),(ZH,ZH)) (zip ix val)
     where
        ix = [ (i, j) | i <- [AA .. ZH], j <- [AA .. ZH]]
-        --        AA   AE   AH   AO   AW   AX  AXR   AY   EH   ER   EY   IH   IX   IY   OW   OY   UH   UW   UX    B   CH    D   DH   DX   EL   EM   EN    F    G   HH   JH    K    L    M    N   NG   NX    P    Q    R    S   SH    T   TH    V    W   WH    Y    Z   ZH
+       --        AA   AE   AH   AO   AW   AX  AXR   AY   EH   ER   EY   IH   IX   IY   OW   OY   UH   UW   UX    B   CH    D   DH   DX   EL   EM   EN    F    G   HH   JH    K    L    M    N   NG   NX    P    Q    R    S   SH    T   TH    V    W   WH    Y    Z   ZH
        val   = [  0,   3,   1,   1,   3,   1,   1, inf,   3,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
                   3,   0,   3,   3,   3,   3,   3,   4,   1,   3,   2, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
                   1,   3,   0,   1,   2,   1,   1, inf,   3,   2, inf, inf, inf,   4, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   3, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,
@@ -141,7 +141,7 @@ distMatrix = array ((AA,AA),(ZH,ZH)) (zip ix val)
                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf,
                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   2, inf, inf, inf, inf, inf, inf,   0,   1,
                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf,   1,   0]
-
+                
 -- A check to make sure that the distMatrix is symmetrical
 checkMatrixSym :: Bool
 checkMatrixSym = and [ distMatrix ! (i, j) == distMatrix ! (j, i) | i <- [AA .. ZH], j <- [AA .. ZH]]

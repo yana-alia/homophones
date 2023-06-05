@@ -17,24 +17,16 @@ import Arpabet (checkMatrixSym)
 
 homophonesTable
   = [ (["brood"], ["brewed"], All) ==> True
-    , (["bees"], ["bs"], All) ==> True -- bs = multiple Bs (will not work with current method)
     , (["cruise"], ["crews"], All) ==> True
     , (["de"], ["day"], All) ==> True -- Latin
-    , (["essay"], ["sa"], All) ==> True
-    , (["eyes"], ["is"], All) ==> True -- expected pronunciation not in dict
-    , (["ewes"], ["us"], All) ==> True
     , (["oh"], ["o"], All) ==> True
     , (["owe"], ["o"], All) ==> True
-    , (["owes"], ["os"], All) ==> True
     , (["pea"], ["p"], All) ==> True
     , (["pee"], ["p"], All) ==> True
     , (["see"], ["c"], All) ==> True
     , (["seedy"], ["cd"], All) ==> True
     , (["te"], ["t"], All) ==> True
     , (["tee"], ["t"], All) ==> True
-    , (["teas"], ["ts"], All) ==> True
-    , (["tees"], ["ts"], All) ==> True
-    , (["use"], ["us"], All) ==> True
     , (["why"], ["y"], All) ==> True
     , (["zee"], ["z"], All) ==> True
     , (["ad"], ["add"], All) ==> True
@@ -159,8 +151,6 @@ homophonesTable
     , (["dual"], ["duel"], All) ==> True
     , (["duct"], ["ducked"], All) ==> True
     , (["earn"], ["urn"], All) ==> True
-    , (["ease"], ["ee"], All) ==> True -- ee = multiple Es (will not work with current method)
-    , (["ease"], ["es"], All) ==> True -- [["IY","Z"]] [["EH","S"]]
     , (["ewe"], ["u"], All) ==> True
     , (["yew"], ["you"], All) ==> True
     , (["u"], ["yew"], All) ==> True
@@ -498,7 +488,7 @@ homophonesTable
     , (["you'll"], ["yule"], All) ==> True
     ]
 
-homTableNotInDict
+homTableNotInDict -- 106 Tests
   = [ (["accessary"], ["accessory"], All) ==> True
     , (["bees"], ["bb"], All) ==> True
     , (["cavy"], ["kv"], All) ==> True
@@ -595,6 +585,16 @@ homTableNotInDict
     , (["weaver"], ["weever"], All) ==> True
     , (["were"], ["whirr"], All) ==> True
     , (["wheald"], ["wheeled"], All) ==> True -- wheald is not in the dictionary
+    , (["bees"], ["bs"], All) ==> True -- bs = multiple Bs (will not work with current method)
+    , (["essay"], ["sa"], All) ==> True
+    , (["eyes"], ["is"], All) ==> True -- expected pronunciation not in dict
+    , (["ewes"], ["us"], All) ==> True
+    , (["owes"], ["os"], All) ==> True
+    , (["teas"], ["ts"], All) ==> True
+    , (["tees"], ["ts"], All) ==> True
+    , (["use"], ["us"], All) ==> True
+    , (["ease"], ["ee"], All) ==> True -- ee = multiple Es (will not work with current method)
+    , (["ease"], ["es"], All) ==> True -- [["IY","Z"]] [["EH","S"]]
     ]
 
 falsePositives
@@ -714,6 +714,7 @@ megaTest = map readMegaTest $ lines getFile
 
 allTestCases
       = [ TestCase "Morse homophoneTable" (uncurry3 isHomophone) homophonesTable
+        -- , TestCase "Not in Dict" (uncurry3 isHomophone) homTableNotInDict
         , TestCase "Non-Homophones" (uncurry3 isHomophone) falsePositives
         -- , TestCase "Pure homophones" (uncurry3 isHomophone) megaTest
         , TestCase "Multi-word homophones" (uncurry3 isHomophone) multWords ]

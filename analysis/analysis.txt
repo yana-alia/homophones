@@ -63,6 +63,7 @@ think abt usage of this other than crossword:
 - speech recognition, especially from non native speakers with accents so fuzzy homophone
    can catch it.
 - give to crossword setter
+- Why would we do this compared to current solutions with NN
 
 
 Future work:
