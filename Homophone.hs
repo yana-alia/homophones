@@ -10,10 +10,13 @@ import Data.Array
 
 import Arpabet
 
-data Accent = British | None | All
+data Accent = British | Cockney | None | All
             deriving (Eq, Show, Read)
 
 type Pronunciation = [ARPABET]
+
+fuzzyThreshold :: Float
+fuzzyThreshold = 1.1
 
 -- Takes two list of words and compares their phonetic spellings and outputs True
 -- if they are pure homophones of each other and false otherwise
@@ -28,7 +31,7 @@ isPureHomophone x y acc = matchAny combX combY
 -- Takes two list of words and compares their phonetic spellings and outputs True
 -- if their fuzzy score is below a certain threshold
 isHomophone :: [String] -> [String] -> Accent -> Bool
-isHomophone x y acc = fuzzyScore combX combY < 2
+isHomophone x y acc = fuzzyScore combX combY < fuzzyThreshold
     where
         combX = miscChange $ convertToAccent acc (combine phonX)
         combY = miscChange $ convertToAccent acc (combine phonY)
@@ -90,6 +93,7 @@ lookupArpabet s = Map.lookup (map toUpper s) dictMap
 -- outputs True if any elem from list xs matches any elem from list ys
 matchAny :: Eq a => [a] -> [a] -> Bool
 matchAny [] _  = False
+matchAny _ []  = False
 matchAny xs ys = any (`elem` ys) xs
 
 -- Converts the ArpabetDict into a HashMap for faster lookup
@@ -112,7 +116,9 @@ readDict = read
 convertToAccent :: Accent -> [Pronunciation] -> [Pronunciation]
 convertToAccent None ls    = ls
 convertToAccent British ls = map convertToBritish ls
-convertToAccent All ls     = map head . group . sort $ map convertToBritish ls ++ ls
+convertToAccent Cockney ls = map convertToCockney ls
+convertToAccent All ls     
+    = map head . group . sort $ map convertToBritish ls ++ map convertToCockney ls ++ ls
 
 convertToBritish :: [ARPABET] -> [ARPABET]
 convertToBritish []  = []
@@ -121,6 +127,11 @@ convertToBritish (R : xs)
     | isConsonent $ head xs = convertToBritish xs
     | otherwise = R : convertToBritish xs
 convertToBritish (x : xs) = x : convertToBritish xs
+
+convertToCockney :: [ARPABET] -> [ARPABET]
+convertToCockney [] = []
+convertToCockney (HH : xs) = convertToCockney xs
+convertToCockney (x : xs) = x : convertToCockney xs
 
 -- ============================================ MISC CHANGES ============================================ --
 
@@ -208,13 +219,17 @@ readRevDict = read
 -- fuzzyArpabet :: Pronunciation -> [Pronunciation]
 -- fuzzyArpabet = fuzzyArpabet' 0
 
+
+-- maxChanges :: Int
+-- maxChanges = 2
+--
 -- -- "map (arp :)" will cons arp onto every inner list and therefore needs a inner list to
 -- -- map over, hence "[[]]" as the base case.
--- fuzzyArpabet' :: Float -> Pronunciation -> [Pronunciation]
+-- fuzzyArpabet' :: Int -> Pronunciation -> [Pronunciation]
 -- fuzzyArpabet' _ [] = [[]]
--- fuzzyArpabet' 2 xx = [xx]
+-- fuzzyArpabet' maxChanges xx = [xx]
 -- fuzzyArpabet' n (x : xs)
---     = [ m | arp <- [AA .. ZH], distMatrix ! (x, arp) <= threshold,
+--     = [ m | arp <- [AA .. ZH], distMatrix ! (x, arp) < inf,
 --         m <- map (arp :) (fuzzyArpabet' (if x == arp then n else n + 1) xs) ]
 
 -- Method 2: Limiting overall fuzzy score

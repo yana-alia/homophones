@@ -141,7 +141,7 @@ distMatrix = array ((AA,AA),(ZH,ZH)) (zip ix val)
                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   0, inf, inf,
                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1,   2, inf, inf, inf, inf, inf, inf,   0,   1,
                 inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf,   1, inf, inf, inf, inf, inf, inf,   1,   0]
-                
+
 -- A check to make sure that the distMatrix is symmetrical
 checkMatrixSym :: Bool
 checkMatrixSym = and [ distMatrix ! (i, j) == distMatrix ! (j, i) | i <- [AA .. ZH], j <- [AA .. ZH]]
@@ -200,53 +200,5 @@ toArpabet "ZH" = ZH
 toArpabet x = error (show x ++ " not an ARPABET")
 
 fromArpabet :: ARPABET -> String
-fromArpabet AA = "AA"
-fromArpabet AE = "AE"
-fromArpabet AH = "AH"
-fromArpabet AO = "AO"
-fromArpabet AW = "AW"
-fromArpabet AX = "AX"
-fromArpabet AXR = "AXR"
-fromArpabet AY = "AY"
-fromArpabet EH = "EH"
-fromArpabet ER = "ER"
-fromArpabet EY = "EY"
-fromArpabet IH = "IH"
-fromArpabet IX = "IX"
-fromArpabet IY = "IY"
-fromArpabet OW = "OW"
-fromArpabet OY = "OY"
-fromArpabet UH = "UH"
-fromArpabet UW = "UW"
-fromArpabet UX = "UX"
-fromArpabet B = "B"
-fromArpabet CH = "CH"
-fromArpabet D = "D"
-fromArpabet DH = "DH"
-fromArpabet DX = "DX"
-fromArpabet EL = "EL"
-fromArpabet EM = "EM"
-fromArpabet EN = "EN"
-fromArpabet F = "F"
-fromArpabet G = "G"
-fromArpabet HH = "HH"
-fromArpabet JH = "JH"
-fromArpabet K = "K"
-fromArpabet L = "L"
-fromArpabet M = "M"
-fromArpabet N = "N"
-fromArpabet NG = "NG"
-fromArpabet NX = "NX"
-fromArpabet P = "P"
-fromArpabet Q = "Q"
-fromArpabet R = "R"
-fromArpabet S = "S"
-fromArpabet SH = "SH"
-fromArpabet T = "T"
-fromArpabet TH = "TH"
-fromArpabet V = "V"
-fromArpabet W = "W"
-fromArpabet WH = "WH"
-fromArpabet Y = "Y"
-fromArpabet Z = "Z"
-fromArpabet ZH = "ZH"
+fromArpabet = show 
+
