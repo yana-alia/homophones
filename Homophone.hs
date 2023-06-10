@@ -16,7 +16,7 @@ data Accent = British | Cockney | None | All
 type Pronunciation = [ARPABET]
 
 fuzzyThreshold :: Float
-fuzzyThreshold = 1.1
+fuzzyThreshold = 1.2
 
 -- Takes two list of words and compares their phonetic spellings and outputs True
 -- if they are pure homophones of each other and false otherwise
@@ -31,10 +31,10 @@ isPureHomophone x y acc = matchAny combX combY
 -- Takes two list of words and compares their phonetic spellings and outputs True
 -- if their fuzzy score is below a certain threshold
 isHomophone :: [String] -> [String] -> Accent -> Bool
-isHomophone x y acc = fuzzyScore combX combY < fuzzyThreshold
+isHomophone x y acc = fuzzyScore combX combY <= fuzzyThreshold
     where
-        combX = miscChange $ convertToAccent acc (combine phonX)
-        combY = miscChange $ convertToAccent acc (combine phonY)
+        combX = miscChange $ convertToAccent None (combine phonX)
+        combY = miscChange $ convertToAccent None (combine phonY)
         phonX = map (maybe [] (map (map toArpabet)) . lookupArpabet) x
         phonY = map (maybe [] (map (map toArpabet)) . lookupArpabet) y
         
@@ -120,6 +120,7 @@ convertToAccent Cockney ls = map convertToCockney ls
 convertToAccent All ls     
     = map head . group . sort $ map convertToBritish ls ++ map convertToCockney ls ++ ls
 
+-- remove R if it is a trailing consonant
 convertToBritish :: [ARPABET] -> [ARPABET]
 convertToBritish []  = []
 convertToBritish [x] = [x | x /= R]
@@ -128,6 +129,7 @@ convertToBritish (R : xs)
     | otherwise = R : convertToBritish xs
 convertToBritish (x : xs) = x : convertToBritish xs
 
+-- remove HH
 convertToCockney :: [ARPABET] -> [ARPABET]
 convertToCockney [] = []
 convertToCockney (HH : xs) = convertToCockney xs
@@ -176,22 +178,23 @@ includes x y = includes' x y x
 
 -- =========================================== REVERSE DICT =========================================== --
 
-threshold :: Float
-threshold = 3
+genThreshold :: Float
+genThreshold = 3
 
 -- generates words that have the exact same phonetic spelling as the given word.
 -- e.g. "READ" -> ["READ","READE","RED","REDD","REED","REID","RIED","RIEDE","WREDE"]
-homophones :: String -> [String]
-homophones s = map head (group $ sort words)
+pureHomophones :: String -> [String]
+pureHomophones s = map head (group $ sort words)
     where
         words = concatMap (fromMaybe [] . lookupWords) arp
         arp   = fromMaybe [] (lookupArpabet s)
 
 -- generates words that have similar phonetic spelling as the given word.
-fuzzyHomophones :: String -> [String]
-fuzzyHomophones s = map head (group $ sort words)
+homophones :: String -> [String]
+homophones s = map head (group $ sort words)
     where
-        words   = concatMap (fromMaybe [] . lookupWords . map fromArpabet) fuzzArp
+        words   = concatMap (fromMaybe [] . lookupWords . map fromArpabet) xtra
+        xtra    = revMiscChange $ revConvertToAccent All fuzzArp
         fuzzArp = concatMap (fuzzyArpabet . map toArpabet) arp
         arp     = fromMaybe [] (lookupArpabet s)
 
@@ -211,7 +214,6 @@ revDictMap = Map.fromList file
 readRevDict :: String -> ([String], [String])
 readRevDict = read
 
-
 -- -- * Method 1: Limit number of changes
 -- -- Generate multiple Arpabet spellings that sound similar to given Pronunciation.
 -- -- Only allow changes up to a certain scoring threshold
@@ -219,15 +221,12 @@ readRevDict = read
 -- fuzzyArpabet :: Pronunciation -> [Pronunciation]
 -- fuzzyArpabet = fuzzyArpabet' 0
 
-
--- maxChanges :: Int
--- maxChanges = 2
 --
 -- -- "map (arp :)" will cons arp onto every inner list and therefore needs a inner list to
 -- -- map over, hence "[[]]" as the base case.
 -- fuzzyArpabet' :: Int -> Pronunciation -> [Pronunciation]
 -- fuzzyArpabet' _ [] = [[]]
--- fuzzyArpabet' maxChanges xx = [xx]
+-- fuzzyArpabet' 2 xx = [xx]
 -- fuzzyArpabet' n (x : xs)
 --     = [ m | arp <- [AA .. ZH], distMatrix ! (x, arp) < inf,
 --         m <- map (arp :) (fuzzyArpabet' (if x == arp then n else n + 1) xs) ]
@@ -244,7 +243,7 @@ fuzzyArpabet = fuzzyArpabet' 0
 fuzzyArpabet' :: Float -> Pronunciation -> [Pronunciation]
 fuzzyArpabet' _ [] = [[]]
 fuzzyArpabet' score (x : xs)
-    = [ m | arp <- [AA .. ZH], score + distMatrix ! (x, arp) <= threshold,
+    = [ m | arp <- [AA .. ZH], score + distMatrix ! (x, arp) <= genThreshold,
         m <- map (arp :) (fuzzyArpabet' (score + distMatrix ! (x, arp)) xs) ]
 
 -- =========================================== DEBUG MODE =========================================== --
@@ -252,18 +251,19 @@ fuzzyArpabet' score (x : xs)
 -- the less modified the pronunciation of the generated word is. 
 
 -- generates words that have similar phonetic spelling as the given word.
-debugFuzzyHomophones :: String -> [(Float, String)]
-debugFuzzyHomophones s = sort $ debugFuzzyHomophones' fuzzArp
+debugHomophones:: String -> [(Float, String)]
+debugHomophones s = sort $ debugHomophones' fuzzArp
     where
         fuzzArp = concatMap (debugFuzzyArpabet 0 . map toArpabet) arp
         arp     = fromMaybe [] (lookupArpabet s)
 
-debugFuzzyHomophones' :: [(Float, Pronunciation)] -> [(Float, String)]
-debugFuzzyHomophones' [] = []
-debugFuzzyHomophones' ((n, s) : ls) = zip n' s' ++ debugFuzzyHomophones' ls
+debugHomophones' :: [(Float, Pronunciation)] -> [(Float, String)]
+debugHomophones' [] = []
+debugHomophones' ((n, s) : ls) = zip n' s' ++ debugHomophones' ls
     where
         n' = [n' | x <- [1 .. length s'], n' <- [n]]
-        s' = fromMaybe [] . lookupWords $ map fromArpabet s
+        s' = concatMap ((fromMaybe [] . lookupWords) . map fromArpabet) xtra
+        xtra  = revMiscChange $ revConvertToAccent All [s]
 
 -- Method 1
 -- "map (arp :)" will cons arp onto every inner list and therefore needs a inner list to
@@ -276,7 +276,7 @@ debugFuzzyHomophones' ((n, s) : ls) = zip n' s' ++ debugFuzzyHomophones' ls
 -- debugFuzzyArpabet' n 2 xx = [(n, xx)]
 -- debugFuzzyArpabet' n i (x : xs)
 --     = nub [ (n', arp : m) | arp <- [AA .. ZH]
---     , distMatrix ! (x, arp) <= threshold
+--     , distMatrix ! (x, arp) < inf
 --     , (n', m) <- debugFuzzyArpabet' (n + distMatrix ! (x, arp)) (if x == arp then i else i + 1) xs]
 
 -- Method 2
@@ -286,8 +286,66 @@ debugFuzzyArpabet :: Float -> Pronunciation -> [(Float, Pronunciation)]
 debugFuzzyArpabet n [] = [(n, [])]
 debugFuzzyArpabet n (x : xs)
     = nub [ (n', arp : m) | arp <- [AA .. ZH]
-    , n + distMatrix ! (x, arp) <= threshold
+    , n + distMatrix ! (x, arp) <= genThreshold
     , (n', m) <- debugFuzzyArpabet (n + distMatrix ! (x, arp)) xs ]
+
+-- ============================================= ACCENTS REV ============================================= --
+
+-- (map head . group . sort) is O(N log N) compared to O(N^2) of nub
+revConvertToAccent :: Accent -> [Pronunciation] -> [Pronunciation]
+revConvertToAccent None ls    = ls
+revConvertToAccent British ls = map convertToBritish ls
+revConvertToAccent Cockney ls = map convertToCockney ls
+revConvertToAccent All ls     
+    = map head . group . sort $ map convertToBritish ls ++ map convertToCockney ls ++
+        map revConvertToBritish ls ++ map (revConvertToCockney False) ls ++ ls
+
+-- add R as a trailing consonant
+revConvertToBritish :: [ARPABET] -> [ARPABET]
+revConvertToBritish []  = []
+revConvertToBritish [x]
+    | isVowel x = [x, R]
+    | otherwise = [x]
+revConvertToBritish (x : xx@(xs : xss))
+    | isVowel x && isConsonent xs = x : R : revConvertToBritish xx
+    | otherwise = x : revConvertToBritish xx
+
+revConvertToCockney :: Bool -> [ARPABET] -> [ARPABET]
+revConvertToCockney _ []  = []
+revConvertToCockney _ [x] = [x]
+revConvertToCockney coda (x : xx@(xs : xss))
+    | isConsonent x && isConsonent xs && coda = x : xs : revConvertToCockney True xss
+    | isConsonent x && coda = x : HH : xs : revConvertToCockney True xss
+    | isConsonent x         = x : revConvertToCockney True xx
+    | coda                  = x : revConvertToCockney True xx
+    | otherwise             = HH : x : revConvertToCockney True xx
+
+
+-- ============================================ MISC CHANGES REV ============================================ --
+
+revMiscChange :: [Pronunciation] -> [Pronunciation]
+revMiscChange [] = []
+revMiscChange xx@(x : xs)
+    | [AY, AH] `includes` x = x : revChangeAYAH x :revMiscChange xs
+    | [AO, R] `includes` x  = x : revChangeAOR x : revMiscChange xs
+    | AY `elem` x           = x : changeAYAH x : revMiscChange xs
+    | ER `elem` x           = x : changeAOR x : revMiscChange xs
+    | otherwise             = x : revMiscChange xs
+
+-- e.g. past oral vs pastoral [["P","AE","S","T"],["AO","R","AH","L"]] vs ["P","AE","S","T","ER","AH","L"]
+--      corp oral vs corporal [["K","AO","R","P"],["AO","R","AH","L"]]  vs ["K","AO","R","P","ER","AH","L"]
+revChangeAOR :: Pronunciation -> Pronunciation
+revChangeAOR []            = []
+revChangeAOR (AO : R : xs) = ER : revChangeAOR xs
+revChangeAOR (x : xs)      = x : revChangeAOR xs
+
+-- changing AY -> AY,AH is chosen over AY,AH -> AY to increase potential fuzzy homophones
+-- from multiple words.
+-- e.g. vial vs vile ["V","AY","AH","L"] vs ["V","AY","L"]
+revChangeAYAH :: Pronunciation -> Pronunciation
+revChangeAYAH []             = []
+revChangeAYAH (AY : AH : xs) = AY : revChangeAYAH xs
+revChangeAYAH (x : xs)       = x : revChangeAYAH xs
 
 
 -- ========================================== MISCELLANEOUS ========================================== --
@@ -300,12 +358,13 @@ debugFuzzyArpabet n (x : xs)
          Fighting Liar -> Lighting Fire
          Dean Busy -> Bean Dizzy
          Nosy Cook -> Cozy Nook
+         Claws Paws -> Pause Clause
 -}
 
 -- This function takes in a pair of words and outputs a list of pairs of words that are generated
 -- by spoonerism.
 -- e.g. spoonerism ("BLUSHING","CROW") = [("CRUSHING","BLEAU"),("CRUSHING","BLOW"),("CRUSHING","BLOWE")]
---      spoonerism ("fighting","liar") = [("LIGHTING","FIRE")]
+--      spoonerism ("FIGHTING","LIAR") = [("LIGHTING","FIRE")]
 spoonerism :: (String, String) -> [(String,String)]
 spoonerism (w1, w2) = [ words | a <- p1, b <- p2, words <- spoonerism' a b]
     where 

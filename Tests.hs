@@ -6,6 +6,7 @@ import qualified Data.Map as Map
 import TestSuite
 import Homophone
 import Arpabet (checkMatrixSym)
+import Data.Char
 
 
 {-
@@ -486,31 +487,26 @@ homophonesTable
     , (["your"], ["you're"], All) ==> True
     , (["yoke"], ["yolk"], All) ==> True
     , (["you'll"], ["yule"], All) ==> True
+    , (["cayenne"], ["k","n"], All) ==> True
+    , (["envy"], ["n","v"], All) ==> True
+    , (["essen"], ["s","n"], All) ==> True
+    , (["essex"], ["s","x"], All) ==> True
+    , (["excel"], ["x","l"], All) ==> True
+    , (["essay"], ["s","a"], All) ==> True
+    , (["ivy"], ["i","v"], All) ==> True
     ]
 
-homTableNotInDict -- 106 Tests
+homTableNotInDict -- 100 Tests
   = [ (["accessary"], ["accessory"], All) ==> True
-    , (["bees"], ["bb"], All) ==> True
-    , (["cavy"], ["kv"], All) ==> True
-    , (["cayenne"], ["kn"], All) ==> True
     , (["crude"], ["crewed"], All) ==> True
-    , (["cutie"], ["qt"], All) ==> True
-    , (["envy"], ["nv"], All) ==> True
-    , (["essen"], ["sn"], All) ==> True
-    , (["essex"], ["sx"], All) ==> True
-    , (["excel"], ["xl"], All) ==> True
-    , (["ells"], ["ll"], All) ==> True
-    , (["els"], ["ll"], All) ==> True
     , (["exe"], ["x"], All) ==> True
     , (["eyed"], ["ied"], All) ==> True
-    , (["kale"], ["kl"], All) ==> True
-    , (["kewpie"], ["qp"], All) ==> True
+    , (["kale"], ["k","l"], All) ==> True
+    , (["cavy"], ["k","v"], All) ==> True
+    , (["cutie"], ["q","t"], All) ==> True
+    , (["kewpie"], ["q","p"], All) ==> True
     , (["meant"], ["ment"], All) ==> True
-    , (["peas"], ["ps"], All) ==> True
-    , (["pees"], ["ps"], All) ==> True
-    , (["seas"], ["cs"], All) ==> True
-    , (["sees"], ["cs"], All) ==> True
-    , (["teepee"], ["tp"], All) ==> True
+    , (["teepee"], ["t","p"], All) ==> True
     , (["all"], ["awl"], All) ==> True
     , (["auk"], ["orc"], All) ==> True
     , (["away"], ["aweigh"], All) ==> True
@@ -548,7 +544,6 @@ homTableNotInDict -- 106 Tests
     , (["hed"], ["heed"], All) ==> True
     , (["holey"], ["holy"], All) ==> True
     , (["hockey"], ["oche"], All) ==> True
-    , (["ivy"], ["iv"], All) ==> True
     , (["knob"], ["nob"], All) ==> True
     , (["laager"], ["lager"], All) ==> True
     , (["lase"], ["laze"], All) ==> True
@@ -585,9 +580,15 @@ homTableNotInDict -- 106 Tests
     , (["weaver"], ["weever"], All) ==> True
     , (["were"], ["whirr"], All) ==> True
     , (["wheald"], ["wheeled"], All) ==> True -- wheald is not in the dictionary
+    , (["bees"], ["bb"], All) ==> True
+    , (["ells"], ["ll"], All) ==> True
+    , (["els"], ["ll"], All) ==> True
+    , (["peas"], ["ps"], All) ==> True
+    , (["pees"], ["ps"], All) ==> True
+    , (["seas"], ["cs"], All) ==> True
+    , (["sees"], ["cs"], All) ==> True
     , (["bees"], ["bs"], All) ==> True -- bs = multiple Bs (will not work with current method)
-    , (["essay"], ["sa"], All) ==> True
-    , (["eyes"], ["is"], All) ==> True -- expected pronunciation not in dict
+    , (["eyes"], ["i","s"], All) ==> True -- expected pronunciation not in dict
     , (["ewes"], ["us"], All) ==> True
     , (["owes"], ["os"], All) ==> True
     , (["teas"], ["ts"], All) ==> True
@@ -698,7 +699,7 @@ multWords
     , (["can","ah","pee"], ["canopy"], All) ==> True
     , (["past","oral"], ["pastoral"], All) ==> True -- Fuzzy homophone. Remove "R"
     , (["x","l","anse"], ["excellence"], All) ==> True
-    , (["cure","it"], ["curate"], All) ==> True
+    , (["cure","it"], ["curate"], All) ==> True -- Guardian 26,698 19 Down
     , (["faux","beer"], ["phobia"], All) ==> True -- Independent 10,735
     ]
 
@@ -712,12 +713,20 @@ megaTest = map readMegaTest $ lines getFile
     readMegaTest :: String -> (([String], [String], Accent), Bool)
     readMegaTest = read
 
-allTestCases
-      = [ TestCase "Morse homophoneTable" (uncurry3 isHomophone) homophonesTable
-        -- , TestCase "Not in Dict" (uncurry3 isHomophone) homTableNotInDict
-        , TestCase "Non-Homophones" (uncurry3 isHomophone) falsePositives
-        -- , TestCase "Pure homophones" (uncurry3 isHomophone) megaTest
-        , TestCase "Multi-word homophones" (uncurry3 isHomophone) multWords ]
+
+homophoneGenTest :: [String] -> [String] -> Accent -> Bool
+homophoneGenTest [x] [y] _ = map toUpper y `elem` homophones x 
+homophoneGenTest _ _ _ = False
+
+allTestCases = [
+        --   TestCase "Morse homophoneTable" (uncurry3 isHomophone) homophonesTable
+        -- -- , TestCase "Not in Dict" (uncurry3 isHomophone) homTableNotInDict
+        -- , TestCase "Non-Homophones" (uncurry3 isHomophone) falsePositives
+        -- -- , TestCase "Pure homophones" (uncurry3 isHomophone) megaTest
+        -- , TestCase "Multi-word homophones" (uncurry3 isHomophone) multWords
+        TestCase "Generating homophones (homophonesTable)" (uncurry3 homophoneGenTest) homophonesTable
+        , TestCase "Generating homophones (Non-homophones)" (uncurry3 homophoneGenTest) falsePositives 
+        ]
 
 runTests = mapM_ goTest allTestCases
 
