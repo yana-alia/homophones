@@ -72,8 +72,8 @@ splitArpabet (k, v) = (k, v')
 {-# NOINLINE swapPair #-}
 swapPair :: IO ()
 swapPair = do
-    let m = sort $ map swap file
-    let formated = map splitArpabetRev m
+    let m = map swap file
+    let formated = sort $ map splitArpabetRev m
     let mergedList = mergeWords formated
     writeFile "mergedRev.txt" (unlines $ map show mergedList)
     where
@@ -85,6 +85,22 @@ swapPair = do
             
         readPair :: String -> ([String], String)
         readPair = read
+
+{-# NOINLINE reformat #-}
+reformat :: IO ()
+reformat = do
+    let formated = sort file
+    let mergedList = mergeWords formated
+    writeFile "mergedRev.txt" (unlines $ map show mergedList)
+    where
+        file = map readPair2 $ lines getFile
+
+        getFile :: String
+        getFile = unsafePerformIO $ do
+            readFile "data/RevArpabetDict.txt"
+            
+        readPair2 :: String -> ([String], [String])
+        readPair2 = read
 
 -- FOR REVERSE DICT:
 --  merge homophones to have only one entry
@@ -115,5 +131,5 @@ createPureTests :: IO()
 createPureTests = writeFile "tests.txt" (unlines $ map show filtered)
     where
         filtered = nubBy checkEqTuple tests
-        tests = filter (uncurry (/=)) [(k, v) | k <- keys, v <- homophones k]
+        tests = filter (uncurry (/=)) [(k, v) | k <- keys, v <- pureHomophones k]
         keys = Map.keys dictMap

@@ -2,13 +2,14 @@ module Homophone where
 
 import qualified Data.Map as Map
 import Data.List
-import Data.IntMap (fromList)
+import Data.IntMap (fromList, split)
 import Data.Char
 import System.IO.Unsafe
 import Data.Maybe
 import Data.Array
 
 import Arpabet
+import Debug.Trace
 
 data Accent = British | Cockney | None | All
             deriving (Eq, Show, Read)
@@ -16,7 +17,10 @@ data Accent = British | Cockney | None | All
 type Pronunciation = [ARPABET]
 
 fuzzyThreshold :: Float
-fuzzyThreshold = 1.2
+fuzzyThreshold = 1.5
+
+genThreshold :: Float
+genThreshold = 3
 
 -- Takes two list of words and compares their phonetic spellings and outputs True
 -- if they are pure homophones of each other and false otherwise
@@ -33,8 +37,8 @@ isPureHomophone x y acc = matchAny combX combY
 isHomophone :: [String] -> [String] -> Accent -> Bool
 isHomophone x y acc = fuzzyScore combX combY <= fuzzyThreshold
     where
-        combX = miscChange $ convertToAccent None (combine phonX)
-        combY = miscChange $ convertToAccent None (combine phonY)
+        combX = convertToAccent acc $ miscChange (combine phonX)
+        combY = convertToAccent acc $ miscChange (combine phonY)
         phonX = map (maybe [] (map (map toArpabet)) . lookupArpabet) x
         phonY = map (maybe [] (map (map toArpabet)) . lookupArpabet) y
         
@@ -141,7 +145,7 @@ miscChange :: [Pronunciation] -> [Pronunciation]
 miscChange [] = []
 miscChange xx@(x : xs)
     | AY `elem` x = x : changeAYAH x : miscChange xs
-    | ER `elem` x = x : changeAOR x : miscChange xs
+    | ER `elem` x = x : changeAOR x : changeR x : miscChange xs
     | otherwise   = x : miscChange xs
 
 -- e.g. past oral vs pastoral [["P","AE","S","T"],["AO","R","AH","L"]] vs ["P","AE","S","T","ER","AH","L"]
@@ -161,6 +165,11 @@ changeAYAH (AY : AH : xs) = AY : AH : changeAYAH xs
 changeAYAH (AY : xs) = AY : AH : changeAYAH xs
 changeAYAH (x : xs)  = x : changeAYAH xs
 
+-- e.g. liar vs lyre ["L","AY","ER"] vs ["L","AY","R"]
+changeR :: Pronunciation -> Pronunciation
+changeR [] = []
+changeR (ER : xs) = R : changeR xs
+changeR (x : xs) = x : changeR xs
 
 -- similar to Elem but supports a consecutive list to compare.
 -- e.g. includes [1,2] [0,1,2,3] = True
@@ -178,9 +187,6 @@ includes x y = includes' x y x
 
 -- =========================================== REVERSE DICT =========================================== --
 
-genThreshold :: Float
-genThreshold = 3
-
 -- generates words that have the exact same phonetic spelling as the given word.
 -- e.g. "READ" -> ["READ","READE","RED","REDD","REED","REID","RIED","RIEDE","WREDE"]
 pureHomophones :: String -> [String]
@@ -190,13 +196,14 @@ pureHomophones s = map head (group $ sort words)
         arp   = fromMaybe [] (lookupArpabet s)
 
 -- generates words that have similar phonetic spelling as the given word.
-homophones :: String -> [String]
-homophones s = map head (group $ sort words)
+homophones :: [String] -> Accent -> [String]
+homophones s acc = map head (group $ sort words)
     where
-        words   = concatMap (fromMaybe [] . lookupWords . map fromArpabet) xtra
-        xtra    = revMiscChange $ revConvertToAccent All fuzzArp
-        fuzzArp = concatMap (fuzzyArpabet . map toArpabet) arp
-        arp     = fromMaybe [] (lookupArpabet s)
+        words      = concatMap (fromMaybe [] . lookupWords) xtra
+        xtra       = map (map fromArpabet) $ revConvertToAccent acc $ revMiscChange fuzzArp
+        fuzzArp    = concatMap fuzzyArpabet $ combine arp
+        arp        = map (maybe [] (map (map toArpabet)) . lookupArpabet) s
+
 
 -- look up words that corresponds to the given ARPABET spelling if exists in dictionary
 lookupWords :: [String] -> Maybe [String]
@@ -251,19 +258,22 @@ fuzzyArpabet' score (x : xs)
 -- the less modified the pronunciation of the generated word is. 
 
 -- generates words that have similar phonetic spelling as the given word.
-debugHomophones:: String -> [(Float, String)]
-debugHomophones s = sort $ debugHomophones' fuzzArp
+debugHomophones:: [String] -> Accent -> Bool -> [(Float, String)]
+debugHomophones s acc multi = map head (group $ sort $ debugHomophones' fuzzArp acc multi)
     where
-        fuzzArp = concatMap (debugFuzzyArpabet 0 . map toArpabet) arp
-        arp     = fromMaybe [] (lookupArpabet s)
+        fuzzArp = concatMap (debugFuzzyArpabet 0) $ combine arp
+        arp     = map (maybe [] (map (map toArpabet)) . lookupArpabet) s
 
-debugHomophones' :: [(Float, Pronunciation)] -> [(Float, String)]
-debugHomophones' [] = []
-debugHomophones' ((n, s) : ls) = zip n' s' ++ debugHomophones' ls
+debugHomophones' :: [(Float, Pronunciation)] -> Accent -> Bool -> [(Float, String)]
+debugHomophones' [] _ _ = []
+debugHomophones' ((n, s) : ls) acc multi = zip n' s' ++ debugHomophones' ls acc multi
     where
         n' = [n' | x <- [1 .. length s'], n' <- [n]]
-        s' = concatMap ((fromMaybe [] . lookupWords) . map fromArpabet) xtra
-        xtra  = revMiscChange $ revConvertToAccent All [s]
+        s' = if multi then multiwords else words
+        multiwords = concat $ splitArps split
+        split      = concatMap (\x -> [splitAt i x | i <- [0 ..length x]]) xtra
+        words = concatMap (fromMaybe [] . lookupWords) xtra
+        xtra  =  map (map fromArpabet) $ revConvertToAccent acc $ revMiscChange [s]
 
 -- Method 1
 -- "map (arp :)" will cons arp onto every inner list and therefore needs a inner list to
@@ -328,6 +338,7 @@ revMiscChange [] = []
 revMiscChange xx@(x : xs)
     | [AY, AH] `includes` x = x : revChangeAYAH x :revMiscChange xs
     | [AO, R] `includes` x  = x : revChangeAOR x : revMiscChange xs
+    | R `elem` x            = x : revChangeR x : revMiscChange xs
     | AY `elem` x           = x : changeAYAH x : revMiscChange xs
     | ER `elem` x           = x : changeAOR x : revMiscChange xs
     | otherwise             = x : revMiscChange xs
@@ -339,14 +350,21 @@ revChangeAOR []            = []
 revChangeAOR (AO : R : xs) = ER : revChangeAOR xs
 revChangeAOR (x : xs)      = x : revChangeAOR xs
 
--- changing AY -> AY,AH is chosen over AY,AH -> AY to increase potential fuzzy homophones
--- from multiple words.
 -- e.g. vial vs vile ["V","AY","AH","L"] vs ["V","AY","L"]
 revChangeAYAH :: Pronunciation -> Pronunciation
 revChangeAYAH []             = []
 revChangeAYAH (AY : AH : xs) = AY : revChangeAYAH xs
 revChangeAYAH (x : xs)       = x : revChangeAYAH xs
 
+-- Only allows R -> ER changes if it is not the first ARPABET
+revChangeR :: Pronunciation -> Pronunciation
+revChangeR []       = []
+revChangeR (x : xs) = x : revChangeR' xs
+    where
+        revChangeR' :: Pronunciation -> Pronunciation
+        revChangeR' [] = []
+        revChangeR' (ER : xs) = R : changeR xs
+        revChangeR' (x : xs) = x : changeR xs
 
 -- ========================================== MISCELLANEOUS ========================================== --
 
@@ -388,4 +406,28 @@ splitWhen func xx = splitWhen' func xx []
         splitWhen' func xx@(x : xs) leftover
             | func x = (leftover, xx)
             | otherwise = splitWhen' func xs (leftover ++ [x])
+
+-- ========================================== FUTURE WORK ========================================== --
+
+-- TODO: Allow properly filtered multi-word results
+-- homophones :: [String] -> Accent -> Bool -> [String]
+-- homophones s acc multi = map head (group $ sort $ if multi then multiwords else words)
+--     where
+--         words      = concatMap (fromMaybe [] . lookupWords) xtra
+--         multiwords = concat $ splitArps split
+--         split      = concatMap (\x -> [splitAt i x | i <- [0 ..length x]]) xtra
+--         xtra       = map (map fromArpabet) $ revConvertToAccent acc $ revMiscChange fuzzArp
+--         fuzzArp    = concatMap fuzzyArpabet $ combine arp
+--         arp        = map (maybe [] (map (map toArpabet)) . lookupArpabet) s
+
+splitArps :: [([String], [String])] -> [[String]]
+splitArps [] = []
+splitArps ((w1, []) : ws) = fromMaybe [] (lookupWords w1) : splitArps ws
+splitArps (([], w2) : ws) = fromMaybe [] (lookupWords w2) : splitArps ws
+splitArps ((w1, w2) : ws) 
+    | isNothing w1' || isNothing w2' = [] : splitArps ws
+    | otherwise = [xs ++ (' ' : ys) | xs <- fromMaybe [] w1', ys <- fromMaybe [] w2'] : splitArps ws
+    where
+        w1' = lookupWords w1
+        w2' = lookupWords w2
             

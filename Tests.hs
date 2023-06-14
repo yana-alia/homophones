@@ -487,16 +487,19 @@ homophonesTable
     , (["your"], ["you're"], All) ==> True
     , (["yoke"], ["yolk"], All) ==> True
     , (["you'll"], ["yule"], All) ==> True
-    , (["cayenne"], ["k","n"], All) ==> True
-    , (["envy"], ["n","v"], All) ==> True
-    , (["essen"], ["s","n"], All) ==> True
-    , (["essex"], ["s","x"], All) ==> True
-    , (["excel"], ["x","l"], All) ==> True
-    , (["essay"], ["s","a"], All) ==> True
-    , (["ivy"], ["i","v"], All) ==> True
     ]
 
-homTableNotInDict -- 100 Tests
+homophonesTableMultiWord
+  = [ (["k","n"], ["cayenne"], All) ==> True
+    , (["n","v"], ["envy"], All) ==> True
+    , (["s","n"], ["essen"], All) ==> True
+    , (["s","x"], ["essex"], All) ==> True
+    , (["x","l"], ["excel"], All) ==> True
+    , (["s","a"], ["essay"], All) ==> True
+    , (["i","v"], ["ivy"], All) ==> True
+    ]
+
+homTableNotInDict -- 99 Tests
   = [ (["accessary"], ["accessory"], All) ==> True
     , (["crude"], ["crewed"], All) ==> True
     , (["exe"], ["x"], All) ==> True
@@ -635,7 +638,7 @@ falsePositives
     , (["money"], ["mummy"], All) ==> False -- (100,95)
     , (["crude"], ["crowd"], All) ==> False -- (100,97)
     , (["fine"], ["phone"], All) ==> False -- (100,95)
-    , (["colour"], ["cull"], All) ==> False -- (100,90)
+    , (["colour"], ["culture"], All) ==> False -- (100,90)
     , (["read"], ["rude"], All) ==> False -- (100,95)
     , (["rhode"], ["arrayed"], All) ==> False -- (100,95)
     , (["monkey"], ["mulkey"], All) ==> False -- (100,91)
@@ -714,18 +717,23 @@ megaTest = map readMegaTest $ lines getFile
     readMegaTest = read
 
 
+
 homophoneGenTest :: [String] -> [String] -> Accent -> Bool
-homophoneGenTest [x] [y] _ = map toUpper y `elem` homophones x 
+homophoneGenTest x [y] acc = map toUpper y `elem` homophones x None 
 homophoneGenTest _ _ _ = False
 
 allTestCases = [
         --   TestCase "Morse homophoneTable" (uncurry3 isHomophone) homophonesTable
+        -- , TestCase "Morse homophoneTable Multi-worded" (uncurry3 isHomophone) homophonesTableMultiWord
         -- -- , TestCase "Not in Dict" (uncurry3 isHomophone) homTableNotInDict
         -- , TestCase "Non-Homophones" (uncurry3 isHomophone) falsePositives
         -- -- , TestCase "Pure homophones" (uncurry3 isHomophone) megaTest
         -- , TestCase "Multi-word homophones" (uncurry3 isHomophone) multWords
-        TestCase "Generating homophones (homophonesTable)" (uncurry3 homophoneGenTest) homophonesTable
+         TestCase "Generating homophones (homophonesTable)" (uncurry3 homophoneGenTest) homophonesTable
+        , TestCase "Generating homophones (Not In Dict)" (uncurry3 homophoneGenTest) homTableNotInDict
+        , TestCase "Generating homophones (homophoneTable multi)" (uncurry3 homophoneGenTest) homophonesTableMultiWord
         , TestCase "Generating homophones (Non-homophones)" (uncurry3 homophoneGenTest) falsePositives 
+        , TestCase "Generating homophones (Multi Words)" (uncurry3 homophoneGenTest) multWords
         ]
 
 runTests = mapM_ goTest allTestCases
