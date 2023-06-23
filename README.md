@@ -8,7 +8,7 @@ Options for accents: None, Cockney, British (None defaults to Standard North Ame
 ```haskell
 $ ghci Homophones.hs
 
--- For true homophones only
+-- For pure homophones only
 ghci> isPureHomophone ["red"] ["read"] None
 True
 
