@@ -8,17 +8,21 @@ Options for accents: None, Cockney, British (None defaults to Standard North Ame
 ```haskell
 $ ghci Homophones.hs
 
--- For true homophones only
+-- For pure homophones only
+-- isPureHomophone [String] [String] Accent
 ghci> isPureHomophone ["red"] ["read"] None
 True
 
+-- pureHomophones String
 ghci> pureHomophones "rain"
 ["RAIN","RAINE","RAYNE","REIGN","REIN","REINE"]
 
 -- Allows pure and fuzzy homophones
+-- isHomophone [String] [String] Accent
 ghci> isHomophone ["pie","crust"] ["pike","rust"] British
 True
 
+-- homophones [String] Accent
 ghci> homophones ["book"] All
 ["BALK","BOOCK","BOOK","BORCK","BORK","BOURQUE","BUTCH"]
 ```
@@ -26,11 +30,13 @@ ghci> homophones ["book"] All
 ```haskell
 -- Spoonerism
 $ ghci Homophones.hs
+-- spoonerism (String, String)
 ghci> spoonerism ("blushing","crow")
 [("CRUSHING","BLEAU"),("CRUSHING","BLOW"),("CRUSHING","BLOWE")]
 
 -- Splits words into syllables
 $ ghci Syllables.hs
+-- splitSyllables String
 ghci> splitSyllables "colourful"
 ["co","lour","ful"]
 ```
