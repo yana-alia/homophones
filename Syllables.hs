@@ -1,7 +1,7 @@
 module Syllables where
 
 
-import Data.List
+import Data.List ( isPrefixOf )
 
 {-
     C = Consonant      V = Vowel

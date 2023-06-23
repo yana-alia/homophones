@@ -1,15 +1,14 @@
 module Homophone where
 
 import qualified Data.Map as Map
-import Data.List
+import Data.List ( group, nub, sort )
 import Data.IntMap (fromList, split)
-import Data.Char
-import System.IO.Unsafe
-import Data.Maybe
-import Data.Array
+import Data.Char ( toUpper )
+import System.IO.Unsafe ( unsafePerformIO )
+import Data.Maybe ( fromMaybe, isNothing )
+import Data.Array ( (!) )
 
 import Arpabet
-import Debug.Trace
 
 data Accent = British | Cockney | None | All
             deriving (Eq, Show, Read)
@@ -17,7 +16,7 @@ data Accent = British | Cockney | None | All
 type Pronunciation = [ARPABET]
 
 fuzzyThreshold :: Float
-fuzzyThreshold = 1.5
+fuzzyThreshold = 1.2
 
 genThreshold :: Float
 genThreshold = 3
@@ -53,10 +52,6 @@ fuzzyScore x y = minimum' $ map (minimum' . fuzzyScore' y) x
         minimum' :: [Float] -> Float
         minimum' [] = inf
         minimum' x = minimum x
-
--- *non-normalised ver*
--- fuzzyScore :: [Pronunciation] -> [Pronunciation] -> Float
--- fuzzyScore x y = minimum $ map (\z -> minimum $ map (fuzzy z) y) x
 
 fuzzyScore' :: [Pronunciation] -> Pronunciation -> [Float]
 fuzzyScore' [] _ = [] 
@@ -124,7 +119,7 @@ convertToAccent Cockney ls = map convertToCockney ls
 convertToAccent All ls     
     = map head . group . sort $ map convertToBritish ls ++ map convertToCockney ls ++ ls
 
--- remove R if it is a trailing consonant
+-- removes R if it is a trailing consonant
 convertToBritish :: [ARPABET] -> [ARPABET]
 convertToBritish []  = []
 convertToBritish [x] = [x | x /= R]
@@ -133,7 +128,7 @@ convertToBritish (R : xs)
     | otherwise = R : convertToBritish xs
 convertToBritish (x : xs) = x : convertToBritish xs
 
--- remove HH
+-- remove HH for words like (HANDLE -> 'ANDLE)
 convertToCockney :: [ARPABET] -> [ARPABET]
 convertToCockney [] = []
 convertToCockney (HH : xs) = convertToCockney xs
@@ -167,9 +162,13 @@ changeAYAH (x : xs)  = x : changeAYAH xs
 
 -- e.g. liar vs lyre ["L","AY","ER"] vs ["L","AY","R"]
 changeR :: Pronunciation -> Pronunciation
-changeR [] = []
-changeR (ER : xs) = R : changeR xs
-changeR (x : xs) = x : changeR xs
+changeR []       = []
+changeR (x : xs) = x : changeR' xs
+    where
+        changeR' :: Pronunciation -> Pronunciation
+        changeR' [] = []
+        changeR' (ER : xs) = R : changeR' xs
+        changeR' (x : xs) = x : changeR' xs
 
 -- similar to Elem but supports a consecutive list to compare.
 -- e.g. includes [1,2] [0,1,2,3] = True
@@ -221,24 +220,6 @@ revDictMap = Map.fromList file
 readRevDict :: String -> ([String], [String])
 readRevDict = read
 
--- -- * Method 1: Limit number of changes
--- -- Generate multiple Arpabet spellings that sound similar to given Pronunciation.
--- -- Only allow changes up to a certain scoring threshold
--- -- e.g. [R,AE,D] -> [[R,EH,D],[R,AE,DH],[R,EH,T],[R,UH,D],...]
--- fuzzyArpabet :: Pronunciation -> [Pronunciation]
--- fuzzyArpabet = fuzzyArpabet' 0
-
---
--- -- "map (arp :)" will cons arp onto every inner list and therefore needs a inner list to
--- -- map over, hence "[[]]" as the base case.
--- fuzzyArpabet' :: Int -> Pronunciation -> [Pronunciation]
--- fuzzyArpabet' _ [] = [[]]
--- fuzzyArpabet' 2 xx = [xx]
--- fuzzyArpabet' n (x : xs)
---     = [ m | arp <- [AA .. ZH], distMatrix ! (x, arp) < inf,
---         m <- map (arp :) (fuzzyArpabet' (if x == arp then n else n + 1) xs) ]
-
--- Method 2: Limiting overall fuzzy score
 -- Generate multiple Arpabet spellings that sound similar to given Pronunciation.
 -- Only allow changes up to a certain scoring threshold
 -- e.g. [R,AE,D] -> [[R,EH,D],[R,AE,DH],[R,EH,T],[R,UH,D],...]
@@ -275,21 +256,6 @@ debugHomophones' ((n, s) : ls) acc multi = zip n' s' ++ debugHomophones' ls acc 
         words = concatMap (fromMaybe [] . lookupWords) xtra
         xtra  =  map (map fromArpabet) $ revConvertToAccent acc $ revMiscChange [s]
 
--- Method 1
--- "map (arp :)" will cons arp onto every inner list and therefore needs a inner list to
--- map over, hence "[[]]" as the base case.
--- debugFuzzyArpabet :: Float -> Pronunciation -> [(Float, Pronunciation)]
--- debugFuzzyArpabet n = debugFuzzyArpabet' n 0
-
--- debugFuzzyArpabet' :: Float -> Int -> Pronunciation -> [(Float, Pronunciation)]
--- debugFuzzyArpabet' n _ [] = [(n, [])]
--- debugFuzzyArpabet' n 2 xx = [(n, xx)]
--- debugFuzzyArpabet' n i (x : xs)
---     = nub [ (n', arp : m) | arp <- [AA .. ZH]
---     , distMatrix ! (x, arp) < inf
---     , (n', m) <- debugFuzzyArpabet' (n + distMatrix ! (x, arp)) (if x == arp then i else i + 1) xs]
-
--- Method 2
 -- "map (arp :)" will cons arp onto every inner list and therefore needs a inner list to
 -- map over, hence "[[]]" as the base case.
 debugFuzzyArpabet :: Float -> Pronunciation -> [(Float, Pronunciation)]
@@ -304,8 +270,8 @@ debugFuzzyArpabet n (x : xs)
 -- (map head . group . sort) is O(N log N) compared to O(N^2) of nub
 revConvertToAccent :: Accent -> [Pronunciation] -> [Pronunciation]
 revConvertToAccent None ls    = ls
-revConvertToAccent British ls = map convertToBritish ls
-revConvertToAccent Cockney ls = map convertToCockney ls
+revConvertToAccent British ls = map convertToBritish ls ++ map revConvertToBritish ls
+revConvertToAccent Cockney ls = map convertToCockney ls ++ map (revConvertToCockney False) ls 
 revConvertToAccent All ls     
     = map head . group . sort $ map convertToBritish ls ++ map convertToCockney ls ++
         map revConvertToBritish ls ++ map (revConvertToCockney False) ls ++ ls
@@ -320,6 +286,7 @@ revConvertToBritish (x : xx@(xs : xss))
     | isVowel x && isConsonent xs = x : R : revConvertToBritish xx
     | otherwise = x : revConvertToBritish xx
 
+-- Adds HH only if there does not exist a onset in the syllable
 revConvertToCockney :: Bool -> [ARPABET] -> [ARPABET]
 revConvertToCockney _ []  = []
 revConvertToCockney _ [x] = [x]
@@ -363,8 +330,8 @@ revChangeR (x : xs) = x : revChangeR' xs
     where
         revChangeR' :: Pronunciation -> Pronunciation
         revChangeR' [] = []
-        revChangeR' (ER : xs) = R : changeR xs
-        revChangeR' (x : xs) = x : changeR xs
+        revChangeR' (R : xs) = ER : revChangeR' xs
+        revChangeR' (x : xs) = x : revChangeR' xs
 
 -- ========================================== MISCELLANEOUS ========================================== --
 

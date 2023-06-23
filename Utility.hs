@@ -1,10 +1,10 @@
 module Utility where
 
-import Control.Monad
-import System.IO.Unsafe
-import Data.Char
-import Data.Tuple
-import Data.List
+import Control.Monad ( unless )
+import System.IO.Unsafe ( unsafePerformIO )
+import Data.Char ( isDigit )
+import Data.Tuple ( swap )
+import Data.List ( nubBy, sort )
 import qualified Data.Map as Map
 
 import Homophone

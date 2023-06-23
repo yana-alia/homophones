@@ -1,12 +1,13 @@
 module Tests where
 
-import System.IO.Unsafe
+import System.IO.Unsafe ( unsafePerformIO )
 import qualified Data.Map as Map
 
 import TestSuite
-import Homophone
+    ( (==>), goTest, time, uncurry3, TestCase(TestCase) )
+import Homophone ( Accent(All), isHomophone, homophones )
 import Arpabet (checkMatrixSym)
-import Data.Char
+import Data.Char ( toUpper )
 
 
 {-
@@ -716,21 +717,19 @@ megaTest = map readMegaTest $ lines getFile
     readMegaTest :: String -> (([String], [String], Accent), Bool)
     readMegaTest = read
 
-
-
 homophoneGenTest :: [String] -> [String] -> Accent -> Bool
-homophoneGenTest x [y] acc = map toUpper y `elem` homophones x None 
+homophoneGenTest x [y] acc = map toUpper y `elem` homophones x All
 homophoneGenTest _ _ _ = False
 
 allTestCases = [
-        --   TestCase "Morse homophoneTable" (uncurry3 isHomophone) homophonesTable
-        -- , TestCase "Morse homophoneTable Multi-worded" (uncurry3 isHomophone) homophonesTableMultiWord
-        -- -- , TestCase "Not in Dict" (uncurry3 isHomophone) homTableNotInDict
-        -- , TestCase "Non-Homophones" (uncurry3 isHomophone) falsePositives
-        -- -- , TestCase "Pure homophones" (uncurry3 isHomophone) megaTest
-        -- , TestCase "Multi-word homophones" (uncurry3 isHomophone) multWords
-         TestCase "Generating homophones (homophonesTable)" (uncurry3 homophoneGenTest) homophonesTable
-        , TestCase "Generating homophones (Not In Dict)" (uncurry3 homophoneGenTest) homTableNotInDict
+          TestCase "Morse homophoneTable" (uncurry3 isHomophone) homophonesTable
+        , TestCase "Morse homophoneTable Multi-worded" (uncurry3 isHomophone) homophonesTableMultiWord
+        -- , TestCase "Not in Dict" (uncurry3 isHomophone) homTableNotInDict
+        , TestCase "Non-Homophones" (uncurry3 isHomophone) falsePositives
+        , TestCase "Pure homophones" (uncurry3 isHomophone) megaTest
+        , TestCase "Multi-word homophones" (uncurry3 isHomophone) multWords
+        , TestCase "Generating homophones (homophonesTable)" (uncurry3 homophoneGenTest) homophonesTable
+        -- , TestCase "Generating homophones (Not In Dict)" (uncurry3 homophoneGenTest) homTableNotInDict
         , TestCase "Generating homophones (homophoneTable multi)" (uncurry3 homophoneGenTest) homophonesTableMultiWord
         , TestCase "Generating homophones (Non-homophones)" (uncurry3 homophoneGenTest) falsePositives 
         , TestCase "Generating homophones (Multi Words)" (uncurry3 homophoneGenTest) multWords
